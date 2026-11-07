@@ -51,7 +51,6 @@ import { last4, readImage } from '../../core/utils';
               <input type="checkbox" [checked]="selected().includes(c)" (change)="toggle(c)" /> {{ c }}
             </label>
           }
-          <label class="inline"><input type="checkbox" formControlName="sound" /> Sound effects</label>
         </fieldset>
 
         @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
@@ -88,7 +87,6 @@ export class Signup {
     password: ['', [Validators.required, Validators.pattern(/^(?=.*\d).{8,}$/)]],
     cardNumber: ['', [Validators.required, Validators.pattern(/^(\d ?){16}$/)]],
     expiry: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]],
-    sound: [true],
   });
 
   bad(field: keyof Signup['form']['controls']) {
@@ -126,7 +124,7 @@ export class Signup {
       picture: this.picture(),
       password: v.password,
       card: { holder: v.name.trim(), last4: last4(v.cardNumber), expiry: v.expiry },
-      preferences: { theme: 'light', favoriteCategories: this.selected(), sound: v.sound },
+      preferences: { theme: 'light', favoriteCategories: this.selected(), sound: true },
     });
     if (error) {
       this.error.set(error);

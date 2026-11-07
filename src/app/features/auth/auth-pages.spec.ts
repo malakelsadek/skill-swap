@@ -19,7 +19,6 @@ const validSignup = {
   password: 'Secret123',
   cardNumber: '4111 1111 1111 1234',
   expiry: '12/29',
-  sound: true,
 };
 
 describe('Signup form', () => {
