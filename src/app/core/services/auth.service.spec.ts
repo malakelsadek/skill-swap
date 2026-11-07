@@ -63,6 +63,17 @@ describe('AuthService', () => {
     expect(auth.register(newUser({ username: 'other' }))).toBe('Email already registered');
   });
 
+  it('updates the profile, persists it, and blocks another user\'s email', () => {
+    const auth = setup();
+    auth.login('student1', 'Pass1234');
+    expect(auth.updateProfile({ name: 'Sara Renamed' })).toBeNull();
+    expect(auth.currentUser()?.name).toBe('Sara Renamed');
+    auth.logout();
+    auth.login('student1', 'Pass1234');
+    expect(auth.currentUser()?.name).toBe('Sara Renamed');
+    expect(auth.updateProfile({ email: 'omar@skillswap.test' })).toBe('Email already registered');
+  });
+
   it('remembers the username in a cookie only when asked', () => {
     const auth = setup();
     auth.login('student1', 'Pass1234', true);

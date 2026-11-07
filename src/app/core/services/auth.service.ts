@@ -50,6 +50,20 @@ export class AuthService {
     return null;
   }
 
+  /** Saves changes to the logged-in user's profile. Returns an error message, or null on success. */
+  updateProfile(changes: Partial<Pick<User, 'name' | 'email' | 'picture' | 'preferences'>>): string | null {
+    const me = this.currentUser();
+    if (!me) return 'Not logged in';
+    const users = this.users();
+    if (changes.email && users.some((u) => u.id !== me.id && u.email === changes.email)) {
+      return 'Email already registered';
+    }
+    const updated: User = { ...me, ...changes };
+    this.storage.local.set(KEYS.users, users.map((u) => (u.id === me.id ? updated : u)));
+    this.currentUser.set(updated);
+    return null;
+  }
+
   hasRole(...roles: Role[]): boolean {
     const user = this.currentUser();
     return user !== null && roles.includes(user.role);

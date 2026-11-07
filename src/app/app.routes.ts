@@ -8,11 +8,11 @@ const page = (title: string, owner: string) => ({ loadComponent: stub, data: { t
 
 export const routes: Routes = [
   // Member 1
-  { path: '', ...page('Home', 'Member 1') },
-  { path: 'signup', ...page('Sign up', 'Member 1') },
-  { path: 'login', ...page('Log in', 'Member 1') },
-  { path: 'profile', ...page('Profile', 'Member 1'), canActivate: [authGuard] },
-  { path: 'admin/users', ...page('Users', 'Member 1'), canActivate: [roleGuard('admin')] },
+  { path: '', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+  { path: 'signup', loadComponent: () => import('./features/auth/signup').then((m) => m.Signup) },
+  { path: 'login', loadComponent: () => import('./features/auth/login').then((m) => m.Login) },
+  { path: 'profile', loadComponent: () => import('./features/profile/profile').then((m) => m.Profile), canActivate: [authGuard] },
+  { path: 'admin/users', loadComponent: () => import('./features/admin/users').then((m) => m.AdminUsers), canActivate: [roleGuard('admin')] },
   { path: 'forbidden', loadComponent: () => import('./shared/forbidden/forbidden').then((m) => m.Forbidden) },
 
   // Member 2: courses and instructor

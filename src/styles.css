@@ -8,6 +8,7 @@
   --border: #d5dcea;
   --danger: #c0392b;
   --success: #2c8a3d;
+  color-scheme: light; /* keep native inputs light even if the OS is in dark mode */
 }
 
 * {
@@ -94,6 +95,8 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 6px;
   font: inherit;
+  background: #fff;
+  color: var(--text);
 }
 
 input[type='checkbox'],
