@@ -3,9 +3,7 @@ import { ChatService } from '../../core/services/chat.service';
 
 @Component({
   selector: 'app-chat-widget',
-  // Hidden until a key is set in src/environments/environment.ts, so the app looks normal without one.
   template: `
-    @if (chat.apiKey) {
     @if (open()) {
       <section class="panel" aria-label="SkillSwap assistant">
         <header>
@@ -42,7 +40,6 @@ import { ChatService } from '../../core/services/chat.service';
           <circle cx="16" cy="10" r="1.4" fill="var(--accent)" />
         </svg>
       </button>
-    }
     }
   `,
   styles: `
