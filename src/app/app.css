@@ -1,0 +1,102 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+/* Mobile first: nav is a collapsed column, opened by the hamburger button */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: var(--primary);
+  color: #fff;
+}
+
+.brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.menu-btn {
+  background: none;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1.4rem;
+  padding: 0 0.6rem;
+  cursor: pointer;
+}
+
+nav {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.2rem;
+  padding-top: 0.6rem;
+}
+
+nav.open {
+  display: flex;
+}
+
+nav a,
+.link-btn {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+nav a:hover,
+.link-btn:hover,
+nav a.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+nav a.cta {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.footer {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* Tablet and up: horizontal nav, no hamburger */
+@media (min-width: 768px) {
+  .menu-btn {
+    display: none;
+  }
+
+  nav,
+  nav.open {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+    padding-top: 0;
+  }
+}

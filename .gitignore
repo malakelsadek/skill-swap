@@ -45,3 +45,6 @@ Thumbs.db
 
 # API keys (chat bonus)
 src/environments/environment.local.ts
+
+# Claude Code local config
+.claude/
