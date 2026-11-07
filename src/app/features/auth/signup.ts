@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CATEGORIES } from '../../core/config';
 import { Category } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
+import { SoundService } from '../../core/services/sound.service';
 import { last4, readImage } from '../../core/utils';
 
 @Component({
@@ -12,7 +13,7 @@ import { last4, readImage } from '../../core/utils';
   template: `
     <section class="container narrow">
       <h1>Sign up</h1>
-      <form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <form class="card" [class.shake]="shake()" (animationend)="shake.set(false)" [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <label for="username">Username</label>
         <input id="username" formControlName="username" autocomplete="username" />
         @if (bad('username')) { <p class="error">Username is required</p> }
@@ -70,6 +71,9 @@ import { last4, readImage } from '../../core/utils';
 export class Signup {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private sound = inject(SoundService);
+
+  shake = signal(false);
 
   categories = CATEGORIES;
   selected = signal<Category[]>([]);
@@ -111,6 +115,7 @@ export class Signup {
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.fail();
       return;
     }
     const v = this.form.getRawValue();
@@ -125,9 +130,16 @@ export class Signup {
     });
     if (error) {
       this.error.set(error);
+      this.fail();
       return;
     }
+    this.sound.play('success');
     this.auth.login(v.username, v.password);
     this.router.navigateByUrl('/');
+  }
+
+  private fail() {
+    this.sound.play('error');
+    this.shake.set(true);
   }
 }

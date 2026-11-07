@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { SoundService } from '../../core/services/sound.service';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,7 @@ import { AuthService } from '../../core/services/auth.service';
   template: `
     <section class="container narrow">
       <h1>Log in</h1>
-      <form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <form class="card" [class.shake]="shake()" (animationend)="shake.set(false)" [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <label for="username">Username</label>
         <input id="username" formControlName="username" autocomplete="username" />
         @if (touched('username')) { <p class="error">Username is required</p> }
@@ -37,6 +38,9 @@ export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private sound = inject(SoundService);
+
+  shake = signal(false);
 
   showPassword = signal(false);
   error = signal('');
@@ -54,13 +58,21 @@ export class Login {
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.fail();
       return;
     }
     const { username, password, remember } = this.form.getRawValue();
     if (!this.auth.login(username, password, remember)) {
       this.error.set('Wrong username or password');
+      this.fail();
       return;
     }
+    this.sound.play('success');
     this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') ?? '/');
+  }
+
+  private fail() {
+    this.sound.play('error');
+    this.shake.set(true);
   }
 }

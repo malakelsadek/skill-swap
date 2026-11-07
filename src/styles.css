@@ -159,3 +159,57 @@ th {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* Animations: feedback only, all switched off for users who prefer reduced motion */
+router-outlet + * {
+  display: block;
+  animation: fade-in 0.35s ease;
+}
+
+.btn,
+nav button {
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.btn:active,
+nav button:active {
+  transform: scale(0.95);
+}
+
+a.card {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+a.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes shake {
+  20%, 60% {
+    transform: translateX(-8px);
+  }
+  40%, 80% {
+    transform: translateX(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

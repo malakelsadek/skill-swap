@@ -39,6 +39,14 @@
       <a routerLink="/login" routerLinkActive="active">Log in</a>
       <a routerLink="/signup" class="cta">Sign up</a>
     }
+    <button
+      type="button"
+      class="link-btn"
+      [attr.aria-label]="sound.muted() ? 'Turn sounds on' : 'Turn sounds off'"
+      (click)="sound.toggle()"
+    >
+      {{ sound.muted() ? '&#128263;' : '&#128266;' }}
+    </button>
   </nav>
 </header>
 

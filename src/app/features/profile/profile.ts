@@ -3,11 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CATEGORIES } from '../../core/config';
 import { Category } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
+import { SoundService } from '../../core/services/sound.service';
+import { SuccessCheck } from '../../shared/success-check/success-check';
 import { readImage } from '../../core/utils';
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SuccessCheck],
   template: `
     <section class="container narrow">
       <h1>My profile</h1>
@@ -33,7 +35,7 @@ import { readImage } from '../../core/utils';
               <dt>Sound effects</dt><dd>{{ u.preferences.sound ? 'On' : 'Off' }}</dd>
             </dl>
             <button class="btn" type="button" (click)="startEdit()">Edit profile</button>
-            @if (saved()) { <p class="ok" role="status">Profile saved</p> }
+            @if (saved()) { <p class="ok" role="status"><app-success-check /> Profile saved</p> }
           } @else {
             <form [formGroup]="form" (ngSubmit)="save()" novalidate>
               <label for="name">Full name</label>
@@ -74,11 +76,12 @@ import { readImage } from '../../core/utils';
     dd { margin: 0; }
     .inline { display: flex; gap: 0.5rem; align-items: center; font-weight: 400; margin: 0.3rem 0; }
     .btn { margin: 0.8rem 0.4rem 0 0; }
-    .ok { color: var(--success); }
+    .ok { display: flex; align-items: center; gap: 0.5rem; color: var(--success); }
   `,
 })
 export class Profile {
   auth = inject(AuthService);
+  private sound = inject(SoundService);
 
   categories = CATEGORIES;
   editing = signal(false);
@@ -124,6 +127,7 @@ export class Profile {
   save() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.sound.play('error');
       return;
     }
     const v = this.form.getRawValue();
@@ -136,8 +140,10 @@ export class Profile {
     });
     if (error) {
       this.error.set(error);
+      this.sound.play('error');
       return;
     }
+    this.sound.play('success');
     this.editing.set(false);
     this.saved.set(true);
   }
