@@ -26,11 +26,8 @@ import { ChatService } from '../../core/services/chat.service';
 
         @if (chat.error()) { <p class="error" role="alert">{{ chat.error() }}</p> }
 
-        @if (!chat.apiKey()) {
-          <form (submit)="saveKey($event, keyInput.value)">
-            <input #keyInput type="password" placeholder="together.ai API key" aria-label="together.ai API key" />
-            <button class="btn" type="submit">Save key</button>
-          </form>
+        @if (!chat.apiKey) {
+          <p class="hint setup">Chat is not set up yet. Add a together.ai key to <code>src/environments/environment.ts</code>.</p>
         } @else {
           <form (submit)="send($event, textInput)">
             <input #textInput placeholder="Ask about courses..." aria-label="Your message" />
@@ -39,12 +36,20 @@ import { ChatService } from '../../core/services/chat.service';
         }
       </section>
     } @else {
-      <button class="fab" type="button" (click)="open.set(true)" aria-label="Open chat">Chat</button>
+      <button class="fab" type="button" (click)="open.set(true)" aria-label="Open chat">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+          <path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+          <circle cx="8" cy="10" r="1.4" fill="var(--accent)" />
+          <circle cx="12" cy="10" r="1.4" fill="var(--accent)" />
+          <circle cx="16" cy="10" r="1.4" fill="var(--accent)" />
+        </svg>
+      </button>
     }
   `,
   styles: `
     :host { position: fixed; right: 1rem; bottom: 1rem; z-index: 20; }
-    .fab { padding: 0.8rem 1.2rem; border: none; border-radius: 999px; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+    .fab { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0; border: none; border-radius: 50%; background: var(--accent); color: #fff; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+    .setup { margin: 0; padding: 0.8rem; border-top: 1px solid var(--border); }
     .panel { display: flex; flex-direction: column; width: 22rem; height: 28rem; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.25); overflow: hidden; }
     header { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.8rem; background: var(--primary); color: #fff; }
     header button { background: none; border: none; color: #fff; font: inherit; cursor: pointer; padding: 0 0.4rem; }
@@ -73,11 +78,6 @@ export class ChatWidget {
       const el = this.log()?.nativeElement;
       if (el) setTimeout(() => (el.scrollTop = el.scrollHeight)); // keep the newest message in view
     });
-  }
-
-  saveKey(event: Event, key: string) {
-    event.preventDefault();
-    if (key.trim()) this.chat.setKey(key);
   }
 
   send(event: Event, input: HTMLInputElement) {

@@ -19,6 +19,5 @@ export const KEYS = {
   session: 'sw_session',
   cart: 'sw_cart',
   chat: 'sw_chat',
-  chatKey: 'sw_chat_key',
   rememberCookie: 'sw_remember',
 } as const;

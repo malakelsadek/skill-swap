@@ -17,20 +17,21 @@ describe('ChatService', () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  it('asks for the API key before calling the network', async () => {
+  it('explains the setup when no key is configured, without calling the network', async () => {
+    chat.apiKey = '';
     await chat.send('hello');
-    expect(chat.error()).toContain('API key');
+    expect(chat.error()).toContain('environment.ts');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('ignores empty messages', async () => {
-    chat.setKey('k');
+    chat.apiKey = 'k';
     await chat.send('   ');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('sends the catalog prompt with the key and stores the reply in sessionStorage', async () => {
-    chat.setKey('secret-key');
+    chat.apiKey = 'secret-key';
     fetchMock.mockReturnValue(reply({ choices: [{ message: { content: ' Try Angular from Scratch. ' } }] }));
     await chat.send('I want to code');
 
@@ -44,18 +45,17 @@ describe('ChatService', () => {
 
     expect(chat.messages().map((m) => m.content)).toEqual(['I want to code', 'Try Angular from Scratch.']);
     expect(JSON.parse(sessionStorage.getItem('sw_chat')!)).toHaveLength(2);
-    expect(localStorage.getItem('sw_chat_key')).toBeNull(); // key never goes to persistent storage
   });
 
   it('reports an invalid key', async () => {
-    chat.setKey('bad');
+    chat.apiKey = 'bad';
     fetchMock.mockReturnValue(reply({}, 401));
     await chat.send('hi');
     expect(chat.error()).toBe('Invalid API key');
   });
 
   it('shows a friendly message when the network fails, and recovers', async () => {
-    chat.setKey('k');
+    chat.apiKey = 'k';
     fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
     await chat.send('hi');
     expect(chat.error()).toBe('Assistant unavailable right now');
@@ -63,7 +63,7 @@ describe('ChatService', () => {
   });
 
   it('clear() empties the history', async () => {
-    chat.setKey('k');
+    chat.apiKey = 'k';
     fetchMock.mockReturnValue(reply({ choices: [{ message: { content: 'ok' } }] }));
     await chat.send('hi');
     chat.clear();

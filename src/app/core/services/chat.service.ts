@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { KEYS } from '../config';
 import { StorageService } from './storage.service';
 
@@ -27,22 +28,18 @@ const SYSTEM_PROMPT =
 class ChatError extends Error {}
 
 /**
- * AI chat via together.ai. A frontend-only app cannot hide an API key, so the key is typed
- * by the user and kept in sessionStorage only (never committed, gone when the tab closes).
+ * AI chat via together.ai. The key comes from src/environments/environment.ts.
+ * shortcut: a frontend-only app cannot hide the key (it ships in the bundle), so it must be a revocable
+ * low-limit key; a backend proxy replaces this in Milestone 2.
  */
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private storage = inject(StorageService);
 
   readonly messages = signal<ChatMessage[]>(this.storage.session.get<ChatMessage[]>(KEYS.chat) ?? []);
-  readonly apiKey = signal(this.storage.session.get<string>(KEYS.chatKey) ?? '');
+  apiKey = environment.togetherApiKey;
   readonly loading = signal(false);
   readonly error = signal('');
-
-  setKey(key: string): void {
-    this.apiKey.set(key.trim());
-    this.storage.session.set(KEYS.chatKey, key.trim());
-  }
 
   clear(): void {
     this.messages.set([]);
@@ -59,8 +56,8 @@ export class ChatService {
     const content = text.trim();
     if (!content || this.loading()) return;
     this.error.set('');
-    if (!this.apiKey()) {
-      this.error.set('Enter your together.ai API key first');
+    if (!this.apiKey) {
+      this.error.set('Chat is not set up: add a together.ai key to src/environments/environment.ts');
       return;
     }
     this.push({ role: 'user', content });
@@ -68,7 +65,7 @@ export class ChatService {
     try {
       const res = await fetch(CHAT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.apiKey()}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.apiKey}` },
         body: JSON.stringify({
           model: CHAT_MODEL,
           max_tokens: 300,
