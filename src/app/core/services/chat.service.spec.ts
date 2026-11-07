@@ -17,10 +17,10 @@ describe('ChatService', () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  it('explains the setup when no key is configured, without calling the network', async () => {
+  it('does not call the network when no key is configured', async () => {
     chat.apiKey = '';
     await chat.send('hello');
-    expect(chat.error()).toContain('environment.ts');
+    expect(chat.error()).toBe('Assistant unavailable right now');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

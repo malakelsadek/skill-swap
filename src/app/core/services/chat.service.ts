@@ -57,7 +57,7 @@ export class ChatService {
     if (!content || this.loading()) return;
     this.error.set('');
     if (!this.apiKey) {
-      this.error.set('Chat is not set up: add a together.ai key to src/environments/environment.ts');
+      this.error.set('Assistant unavailable right now');
       return;
     }
     this.push({ role: 'user', content });

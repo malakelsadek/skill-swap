@@ -3,7 +3,9 @@ import { ChatService } from '../../core/services/chat.service';
 
 @Component({
   selector: 'app-chat-widget',
+  // Hidden until a key is set in src/environments/environment.ts, so the app looks normal without one.
   template: `
+    @if (chat.apiKey) {
     @if (open()) {
       <section class="panel" aria-label="SkillSwap assistant">
         <header>
@@ -26,14 +28,10 @@ import { ChatService } from '../../core/services/chat.service';
 
         @if (chat.error()) { <p class="error" role="alert">{{ chat.error() }}</p> }
 
-        @if (!chat.apiKey) {
-          <p class="hint setup">Chat is not set up yet. Add a together.ai key to <code>src/environments/environment.ts</code>.</p>
-        } @else {
-          <form (submit)="send($event, textInput)">
-            <input #textInput placeholder="Ask about courses..." aria-label="Your message" />
-            <button class="btn" type="submit" [disabled]="chat.loading()">Send</button>
-          </form>
-        }
+        <form (submit)="send($event, textInput)">
+          <input #textInput placeholder="Ask about courses..." aria-label="Your message" />
+          <button class="btn" type="submit" [disabled]="chat.loading()">Send</button>
+        </form>
       </section>
     } @else {
       <button class="fab" type="button" (click)="open.set(true)" aria-label="Open chat">
@@ -45,11 +43,11 @@ import { ChatService } from '../../core/services/chat.service';
         </svg>
       </button>
     }
+    }
   `,
   styles: `
     :host { position: fixed; right: 1rem; bottom: 1rem; z-index: 20; }
     .fab { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0; border: none; border-radius: 50%; background: var(--accent); color: #fff; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
-    .setup { margin: 0; padding: 0.8rem; border-top: 1px solid var(--border); }
     .panel { display: flex; flex-direction: column; width: 22rem; height: 28rem; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.25); overflow: hidden; }
     header { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.8rem; background: var(--primary); color: #fff; }
     header button { background: none; border: none; color: #fff; font: inherit; cursor: pointer; padding: 0 0.4rem; }
