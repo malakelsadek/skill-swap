@@ -16,9 +16,10 @@ export const routes: Routes = [
   { path: 'forbidden', loadComponent: () => import('./shared/forbidden/forbidden').then((m) => m.Forbidden) },
 
   // Member 2: courses and instructor
-  { path: 'courses', ...page('Courses', 'Member 2') },
-  { path: 'courses/:id', ...page('Course detail', 'Member 2') },
-  { path: 'instructor', ...page('Instructor dashboard', 'Member 2'), canActivate: [roleGuard('instructor', 'admin')] },
+  { path: 'courses', loadComponent: () => import('./features/courses/catalog').then((m) => m.Catalog) },
+  { path: 'courses/:id', loadComponent: () => import('./features/courses/course-detail').then((m) => m.CourseDetail) },
+  { path: 'instructor', loadComponent: () => import('./features/instructor/instructor-dashboard').then((m) => m.InstructorDashboard), canActivate: [roleGuard('instructor', 'admin')] },
+  { path: 'instructor/earnings', loadComponent: () => import('./features/instructor/earnings').then((m) => m.Earnings), canActivate: [roleGuard('instructor', 'admin')] },
 
   // Member 3: student commerce and fees
   { path: 'cart', ...page('Cart', 'Member 3'), canActivate: [roleGuard('student')] },
