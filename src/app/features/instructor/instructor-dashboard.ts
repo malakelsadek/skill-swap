@@ -81,11 +81,11 @@ import { CourseService } from '../courses/course.service';
             <tbody>
               @for (c of mine(); track c.id) {
                 <tr>
-                  <td><a [routerLink]="['/courses', c.id]">{{ c.title }}</a></td>
-                  <td>{{ c.category }}</td>
-                  <td>\${{ c.price.toFixed(2) }}</td>
-                  @if (isAdmin()) { <td>{{ courses.instructorName(c.instructorId) }}</td> }
-                  <td class="actions">
+                  <td data-label="Title"><a [routerLink]="['/courses', c.id]">{{ c.title }}</a></td>
+                  <td data-label="Category">{{ c.category }}</td>
+                  <td data-label="Price">\${{ c.price.toFixed(2) }}</td>
+                  @if (isAdmin()) { <td data-label="Instructor">{{ courses.instructorName(c.instructorId) }}</td> }
+                  <td class="actions" data-label="Actions">
                     <button class="btn secondary" type="button" (click)="startEdit(c)">Edit</button>
                     @if (confirmId() === c.id) {
                       <button class="btn danger" type="button" (click)="remove(c)">Confirm delete</button>
@@ -111,6 +111,17 @@ import { CourseService } from '../courses/course.service';
     .row, .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
     .actions { margin: 0; }
     .ok { display: flex; align-items: center; gap: 0.5rem; color: var(--success); }
+
+    /* Phones: each table row becomes a card, so Edit and Delete never scroll out of view */
+    @media (max-width: 600px) {
+      thead { display: none; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tr { margin-bottom: 0.8rem; border: 1px solid var(--border); border-radius: 10px; padding: 0.3rem 0; background: #fff; }
+      td { display: flex; justify-content: space-between; gap: 1rem; border-bottom: none; padding: 0.35rem 0.8rem; }
+      td::before { content: attr(data-label); font-weight: 600; color: var(--muted); }
+      td.actions { justify-content: flex-end; flex-wrap: wrap; }
+      td.actions::before { display: none; }
+    }
   `,
 })
 export class InstructorDashboard {
