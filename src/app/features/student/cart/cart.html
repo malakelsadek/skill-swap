@@ -1,0 +1,57 @@
+
+<div class="container cart">
+  <h1 class="cart__title">Shopping Cart</h1>
+
+  @if (cart().length > 0) {
+    <div class="cart__layout">
+      <section class="card cart__items">
+        <h2 class="cart__section-title">Your Courses</h2>
+
+        @for (course of cart(); track course.id) {
+          <div class="cart__item">
+            <div class="cart__item-info">
+              <h3 class="cart__item-title">{{ course.title }}</h3>
+              <p class="cart__item-price">
+                ${{ course.price.toFixed(2) }}
+              </p>
+            </div>
+
+            <button
+              class="btn danger cart__remove-button"
+              (click)="removeCourse(course.id)">
+              Remove
+            </button>
+          </div>
+        }
+
+        <button
+          class="btn secondary cart__clear-button"
+          (click)="clearCart()">
+          Clear Cart
+        </button>
+      </section>
+
+      <aside class="card cart__summary">
+        <h2 class="cart__section-title">Order Summary</h2>
+
+        <p class="cart__course-count">
+          Number of courses: {{ cart().length }}
+        </p>
+
+        <div class="cart__total">
+          <strong>Total:</strong>
+          <strong>${{ total().toFixed(2) }}</strong>
+        </div>
+
+        <a class="btn cart__checkout-button" routerLink="/checkout">
+          Proceed to Checkout
+        </a>
+      </aside>
+    </div>
+  } @else {
+    <section class="card cart__empty">
+      <h2 class="cart__empty-title">Your cart is empty</h2>
+      <p>You haven't added any courses yet.</p>
+    </section>
+  }
+</div>

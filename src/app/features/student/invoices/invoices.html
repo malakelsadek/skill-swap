@@ -1,0 +1,104 @@
+<div class="container invoices">
+  <h1 class="invoices__title">{{ isStudent ? 'My Invoices' : 'All Invoices' }}</h1>
+
+  @if (paymentMessage) {
+    <p class="invoices__message" role="status">{{ paymentMessage }}</p>
+  }
+
+  @if (refundMessage) {
+    <p class="invoices__message" role="status">{{ refundMessage }}</p>
+  }
+
+  @if (invoices.length > 0) {
+    <div class="card table-wrap">
+      <table class="invoices__table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            @if (!isStudent) {
+              <th>Student</th>
+            }
+            <th>Type</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Refund</th>
+            @if (isStudent) {
+              <th>Actions</th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (invoice of invoices; track invoice.id) {
+            <tr>
+              <td>{{ invoice.id }}</td>
+              <td>{{ formatDate(invoice.date) }}</td>
+              @if (!isStudent) {
+                <td>Student #{{ invoice.studentId }}</td>
+              }
+              <td>{{ invoice.type === 'course' ? 'Course Purchase' : 'Subscription' }}</td>
+              <td>${{ invoice.total.toFixed(2) }}</td>
+              <td>
+                <span
+                  class="invoices__status"
+                  [class.invoices__status--paid]="invoice.status === 'paid'"
+                  [class.invoices__status--pending]="invoice.status === 'pending'"
+                  [class.invoices__status--refunded]="invoice.status === 'refunded'"
+                >
+                  {{ invoice.status }}
+                </span>
+              </td>
+              <td class="invoices__refund-status">{{ refundFor(invoice.id)?.status ?? '-' }}</td>
+              @if (isStudent) {
+                <td>
+                  <div class="invoices__actions">
+                    @if (invoice.status === 'pending') {
+                      <button class="btn invoices__action-button" (click)="payNow(invoice.id)">
+                        Pay Now
+                      </button>
+                    }
+
+                    @if (canRequestRefund(invoice)) {
+                      <button class="btn secondary invoices__action-button" (click)="openRefund(invoice.id)">
+                        Request Refund
+                      </button>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+
+            @if (refundOpenId === invoice.id) {
+              <tr class="invoices__refund-row">
+                <td colspan="7">
+                  <label [attr.for]="'refund-reason-' + invoice.id">Why do you want a refund?</label>
+                  <input
+                    #reason
+                    [id]="'refund-reason-' + invoice.id"
+                    class="invoices__refund-input"
+                    type="text"
+                    placeholder="Enter your reason"
+                  />
+                  <div class="invoices__actions">
+                    <button class="btn invoices__action-button" (click)="submitRefund(invoice.id, reason)">
+                      Send Request
+                    </button>
+                    <button class="btn secondary invoices__action-button" (click)="closeRefund()">
+                      Cancel
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <section class="card invoices__empty">
+      <h2 class="invoices__empty-title">No invoices yet</h2>
+      <p>{{ isStudent ? 'Your purchases and subscriptions will appear here.' : 'Student invoices will appear here.' }}</p>
+    </section>
+  }
+</div>

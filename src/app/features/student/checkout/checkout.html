@@ -1,0 +1,76 @@
+<div class="container checkout">
+  <h1 class="checkout__title">Checkout</h1>
+
+  @if (result(); as result) {
+    <section class="card checkout__result">
+      @if (result.paid) {
+        <h2 class="checkout__success">Payment successful</h2>
+        <p>
+          Invoice #{{ result.invoice.id }} (${{ result.invoice.total.toFixed(2) }}) is paid.
+        </p>
+      } @else {
+        <h2 class="checkout__section-title">Invoice created</h2>
+        <p>
+          Invoice #{{ result.invoice.id }} (${{ result.invoice.total.toFixed(2) }}) is pending.
+          You can pay it any time from your invoices.
+        </p>
+      }
+
+      <div class="checkout__actions">
+        <a class="btn" routerLink="/invoices">View invoices</a>
+        <a class="btn secondary" routerLink="/courses">Keep browsing</a>
+      </div>
+    </section>
+  } @else {
+    <section class="card checkout__summary">
+      <h2 class="checkout__section-title">Order Summary</h2>
+
+      @if (isSubscription) {
+        <div class="checkout__item">
+          <span>SkillSwap Subscription</span>
+          <strong>${{ subscriptionPrice.toFixed(2) }}</strong>
+        </div>
+      } @else {
+        @if (cart().length > 0) {
+          @for (course of cart(); track course.id) {
+            <div class="checkout__item">
+              <span>{{ course.title }}</span>
+              <strong>${{ course.price.toFixed(2) }}</strong>
+            </div>
+          }
+        } @else {
+          <p class="checkout__empty">Your cart is empty.</p>
+        }
+      }
+
+      <div class="checkout__total">
+        <strong>Total</strong>
+        <strong>${{ (isSubscription ? subscriptionPrice : total()).toFixed(2) }}</strong>
+      </div>
+    </section>
+
+    <section class="card checkout__payment">
+      <h2 class="checkout__section-title">Payment</h2>
+
+      <p class="checkout__notice">
+        This is a mock payment. No real transaction will take place.
+      </p>
+
+      @if (message()) {
+        <p class="checkout__message">{{ message() }}</p>
+      }
+
+      <button class="btn checkout__confirm-button" (click)="payNow()">
+        Pay Now
+      </button>
+
+      <button class="btn secondary checkout__confirm-button" (click)="payLater()">
+        Pay Later
+      </button>
+
+      <a class="checkout__back-link" routerLink="/cart">
+        Back to Cart
+      </a>
+    </section>
+  }
+</div>

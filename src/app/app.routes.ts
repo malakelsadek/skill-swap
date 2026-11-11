@@ -22,10 +22,10 @@ export const routes: Routes = [
   { path: 'instructor/earnings', loadComponent: () => import('./features/instructor/earnings').then((m) => m.Earnings), canActivate: [roleGuard('instructor', 'admin')] },
 
   // Member 3: student commerce and fees
-  { path: 'cart', ...page('Cart', 'Member 3'), canActivate: [roleGuard('student')] },
-  { path: 'checkout', ...page('Checkout', 'Member 3'), canActivate: [roleGuard('student')] },
-  { path: 'invoices', ...page('Invoices', 'Member 3'), canActivate: [roleGuard('student', 'accountant', 'admin')] },
-  { path: 'payments', ...page('Payment history', 'Member 3'), canActivate: [roleGuard('student')] },
+  { path: 'cart', loadComponent: () => import('./features/student/cart/cart').then((m) => m.Cart), canActivate: [roleGuard('student')] },
+  { path: 'checkout', loadComponent: () => import('./features/student/checkout/checkout').then((m) => m.Checkout), canActivate: [roleGuard('student')] },
+  { path: 'invoices', loadComponent: () => import('./features/student/invoices/invoices').then((m) => m.Invoices), canActivate: [roleGuard('student', 'accountant', 'admin')] },
+  { path: 'payments', loadComponent: () => import('./features/student/payments/payments').then((m) => m.Payments), canActivate: [roleGuard('student')] },
 
   // Member 4: accounting (accountant and admin only)
  { path: 'accounting/payroll', loadComponent: () => import('./features/accounting/payroll').then((m) => m.Payroll), canActivate: [roleGuard('accountant', 'admin')] },

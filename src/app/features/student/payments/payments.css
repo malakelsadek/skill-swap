@@ -1,0 +1,28 @@
+.payments {
+  margin-bottom: 30px;
+}
+
+.payments__title {
+  margin-bottom: 20px;
+}
+
+.payments__total {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+/* The table itself comes from the global styles; .table-wrap makes it scroll on small screens */
+.payments__table th,
+.payments__table td {
+  white-space: nowrap;
+}
+
+.payments__empty {
+  margin-top: 20px;
+  padding: 32px;
+  text-align: center;
+}
+
+.payments__empty-title {
+  margin-top: 0;
+}

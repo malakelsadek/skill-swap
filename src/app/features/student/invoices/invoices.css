@@ -1,0 +1,99 @@
+.invoices {
+  margin-bottom: 30px;
+}
+
+.invoices__title {
+  margin-bottom: 20px;
+}
+
+/* Payment / refund feedback shown above the table */
+.invoices__message {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #e8eef9;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* The table itself comes from the global styles; .table-wrap makes it scroll on small screens */
+.invoices__table th,
+.invoices__table td {
+  white-space: nowrap;
+}
+
+.invoices__status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.invoices__status--paid {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+
+.invoices__status--pending {
+  color: #b7791f;
+  background: #b7791f20;
+}
+
+.invoices__status--refunded {
+  color: var(--muted);
+  background: var(--border);
+}
+
+.invoices__refund-status {
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.invoices__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.invoices__action-button {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* The row that opens under an invoice when the student asks for a refund */
+.invoices__refund-row td {
+  background: var(--bg);
+  white-space: normal;
+}
+
+.invoices__refund-input {
+  width: 100%;
+  max-width: 450px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+}
+
+.invoices__empty {
+  margin-top: 20px;
+  padding: 32px;
+  text-align: center;
+}
+
+.invoices__empty-title {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .invoices__refund-input {
+    max-width: none;
+  }
+
+  .invoices__refund-row .invoices__action-button {
+    flex: 1;
+  }
+}
