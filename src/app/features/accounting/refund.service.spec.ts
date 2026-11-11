@@ -10,7 +10,7 @@ import { RefundService } from './refund.service';
 const COURSES = [
   { id: 1, title: 'UI Design', category: 'Design', price: 100, instructorId: 5 },
   { id: 2, title: 'Angular', category: 'Programming', price: 50, instructorId: 6 },
-] as Course[];
+] as unknown as Course[];
 
 const invoice = (id: number, status: Invoice['status']): Invoice => ({
   id, studentId: 3, status, type: 'course', date: '2026-11-01',

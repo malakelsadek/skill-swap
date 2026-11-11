@@ -12,28 +12,37 @@ async function render(loginAs?: string) {
   if (loginAs) TestBed.inject(AuthService).login(loginAs, 'Pass1234');
   const fixture = TestBed.createComponent(App);
   await fixture.whenStable();
-  return (fixture.nativeElement as HTMLElement).querySelector('nav')!.textContent!;
+  return fixture;
 }
 
+const el = (fixture: { nativeElement: unknown }) => fixture.nativeElement as HTMLElement;
+const tabs = (fixture: { nativeElement: unknown }) => el(fixture).querySelector('nav')!.textContent!;
+const corner = (fixture: { nativeElement: unknown }) => el(fixture).querySelector('.actions')!.textContent!;
+
 describe('App navbar', () => {
-  it('shows Log in and Sign up to visitors only', async () => {
-    const nav = await render();
-    expect(nav).toContain('Log in');
-    expect(nav).toContain('Sign up');
-    expect(nav).not.toContain('Payroll');
-    expect(nav).not.toContain('Log out');
+  it('shows Log in, Sign up and a profile button to visitors, and no role tabs', async () => {
+    const page = await render();
+    expect(corner(page)).toContain('Log in');
+    expect(corner(page)).toContain('Sign up');
+    expect(el(page).querySelector('[aria-label="Profile"]')).toBeTruthy();
+    expect(tabs(page)).not.toContain('Payroll');
   });
 
-  it('shows student links but not accounting links to a student', async () => {
-    const nav = await render('student1');
-    expect(nav).toContain('Cart');
-    expect(nav).toContain('Log out');
-    expect(nav).not.toContain('Payroll');
+  it('shows student tabs, and Log out only inside the profile menu', async () => {
+    const page = await render('student1');
+    expect(tabs(page)).toContain('Cart');
+    expect(tabs(page)).not.toContain('Payroll');
+    expect(corner(page)).not.toContain('Log in');
+    expect(corner(page)).not.toContain('Log out'); // menu is closed
+
+    (el(page).querySelector('.avatar-btn') as HTMLButtonElement).click();
+    page.detectChanges();
+    expect(el(page).querySelector('.menu')!.textContent).toContain('Log out');
   });
 
-  it('shows accounting links to the accountant', async () => {
-    const nav = await render('accountant');
-    expect(nav).toContain('Payroll');
-    expect(nav).not.toContain('Cart');
+  it('shows accounting tabs to the accountant', async () => {
+    const page = await render('accountant');
+    expect(tabs(page)).toContain('Payroll');
+    expect(tabs(page)).not.toContain('Cart');
   });
 });

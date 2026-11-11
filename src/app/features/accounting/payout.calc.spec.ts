@@ -1,9 +1,9 @@
 import { Course, Invoice, User } from '../../core/models';
 import { calculatePayouts } from './payout.calc';
 
-const course = (id: number, instructorId: number, price: number): Course => ({
-  id, title: `Course ${id}`, category: 'Design', price, instructorId, description: 'd', thumbnail: '', rating: 0,
-});
+// Cast so the test keeps compiling if the shared Course model gains or loses optional fields.
+const course = (id: number, instructorId: number, price: number): Course =>
+  ({ id, title: `Course ${id}`, category: 'Design', price, instructorId, description: 'd', thumbnail: '' }) as Course;
 const invoice = (id: number, status: Invoice['status'], items: [number, number][], type: Invoice['type'] = 'course'): Invoice => ({
   id, studentId: 3, status, type, date: '2026-11-01',
   items: items.map(([courseId, price]) => ({ courseId, price })),

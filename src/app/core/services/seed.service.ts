@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { KEYS } from '../config';
+import { COURSES_SEED } from '../../features/courses/courses.seed';
 import { USERS_SEED } from '../seed/users.seed';
 import { StorageService } from './storage.service';
 
@@ -13,5 +14,6 @@ export class SeedService {
 
   init(): void {
     this.storage.seedIfEmpty(KEYS.users, USERS_SEED);
+    this.storage.seedIfEmpty(KEYS.courses, COURSES_SEED); // Member 2
   }
 }

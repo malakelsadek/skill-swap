@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { KEYS } from '../../core/config';
+import { BudgetEntry } from '../../core/models';
 import { BudgetService, summarize } from './budget.service';
-import { BudgetEntry } from './budget.model';
 
 const entry = (over: Partial<BudgetEntry>): BudgetEntry => ({
-  id: 1, department: 'Design', type: 'income', amount: 100, description: 't', date: '2026-11-01', ...over,
+  id: 1, department: 'Design', type: 'income', amount: 100, date: '2026-11-01', note: 't', ...over,
 });
 
 describe('summarize', () => {
@@ -28,18 +29,26 @@ describe('BudgetService', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({});
     svc = TestBed.inject(BudgetService);
   });
 
   it('adds and removes entries and persists them', () => {
     const before = svc.entries().length;
-    svc.add({ department: 'Design', type: 'income', amount: 10, description: 'x', date: '2026-11-01' });
+    expect(svc.add({ department: 'Design', type: 'income', amount: 10, date: '2026-11-01', note: 'x' })).toBeNull();
     expect(svc.entries().length).toBe(before + 1);
-    expect(JSON.parse(localStorage.getItem('skillswap_budget_entries')!).length).toBe(before + 1);
+    expect(JSON.parse(localStorage.getItem(KEYS.budget)!).length).toBe(before + 1);
 
     const added = svc.entries()[svc.entries().length - 1];
     svc.remove(added.id);
+    expect(svc.entries().length).toBe(before);
+  });
+
+  it('rejects an empty note or a non-positive amount', () => {
+    const before = svc.entries().length;
+    expect(svc.add({ department: 'Design', type: 'income', amount: 0, date: '2026-11-01', note: 'x' })).toBeTruthy();
+    expect(svc.add({ department: 'Design', type: 'income', amount: 10, date: '2026-11-01', note: ' ' })).toBeTruthy();
     expect(svc.entries().length).toBe(before);
   });
 

@@ -8,17 +8,18 @@ const page = (title: string, owner: string) => ({ loadComponent: stub, data: { t
 
 export const routes: Routes = [
   // Member 1
-  { path: '', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
-  { path: 'signup', loadComponent: () => import('./features/auth/signup').then((m) => m.Signup) },
-  { path: 'login', loadComponent: () => import('./features/auth/login').then((m) => m.Login) },
-  { path: 'profile', loadComponent: () => import('./features/profile/profile').then((m) => m.Profile), canActivate: [authGuard] },
-  { path: 'admin/users', loadComponent: () => import('./features/admin/users').then((m) => m.AdminUsers), canActivate: [roleGuard('admin')] },
-  { path: 'forbidden', loadComponent: () => import('./shared/forbidden/forbidden').then((m) => m.Forbidden) },
+  { path: '', title: 'Home', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+  { path: 'signup', title: 'Sign up', loadComponent: () => import('./features/auth/signup').then((m) => m.Signup) },
+  { path: 'login', title: 'Log in', loadComponent: () => import('./features/auth/login').then((m) => m.Login) },
+  { path: 'profile', title: 'My profile', loadComponent: () => import('./features/profile/profile').then((m) => m.Profile), canActivate: [authGuard] },
+  { path: 'admin/users', title: 'Users', loadComponent: () => import('./features/admin/users').then((m) => m.AdminUsers), canActivate: [roleGuard('admin')] },
+  { path: 'forbidden', title: 'Not authorized', loadComponent: () => import('./shared/forbidden/forbidden').then((m) => m.Forbidden) },
 
   // Member 2: courses and instructor
-  { path: 'courses', ...page('Courses', 'Member 2') },
-  { path: 'courses/:id', ...page('Course detail', 'Member 2') },
-  { path: 'instructor', ...page('Instructor dashboard', 'Member 2'), canActivate: [roleGuard('instructor', 'admin')] },
+  { path: 'courses', loadComponent: () => import('./features/courses/catalog').then((m) => m.Catalog) },
+  { path: 'courses/:id', loadComponent: () => import('./features/courses/course-detail').then((m) => m.CourseDetail) },
+  { path: 'instructor', loadComponent: () => import('./features/instructor/instructor-dashboard').then((m) => m.InstructorDashboard), canActivate: [roleGuard('instructor', 'admin')] },
+  { path: 'instructor/earnings', loadComponent: () => import('./features/instructor/earnings').then((m) => m.Earnings), canActivate: [roleGuard('instructor', 'admin')] },
 
   // Member 3: student commerce and fees
   { path: 'cart', ...page('Cart', 'Member 3'), canActivate: [roleGuard('student')] },
