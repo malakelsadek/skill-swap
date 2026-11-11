@@ -28,9 +28,9 @@ export const routes: Routes = [
 
   // Member 4: accounting (accountant and admin only)
  { path: 'accounting/payroll', loadComponent: () => import('./features/accounting/payroll').then((m) => m.Payroll), canActivate: [roleGuard('accountant', 'admin')] },
-  { path: 'accounting/budget', ...page('Department budget', 'Member 4'), canActivate: [roleGuard('accountant', 'admin')] },
-  { path: 'accounting/payouts', ...page('Instructor payouts', 'Member 4'), canActivate: [roleGuard('accountant', 'admin')] },
-  { path: 'accounting/refunds', ...page('Refund approvals', 'Member 4'), canActivate: [roleGuard('accountant', 'admin')] },
+{ path: 'accounting/budget', loadComponent: () => import('./features/accounting/budget').then((m) => m.Budget), canActivate: [roleGuard('accountant', 'admin')] },
+{ path: 'accounting/payouts', loadComponent: () => import('./features/accounting/payouts').then((m) => m.Payouts), canActivate: [roleGuard('accountant', 'admin')] },
+{ path: 'accounting/refunds', loadComponent: () => import('./features/accounting/refunds').then((m) => m.Refunds), canActivate: [roleGuard('accountant', 'admin')] },
 
   { path: '**', redirectTo: '' },
 ];

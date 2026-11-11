@@ -1,51 +1,67 @@
-import { Injectable, signal } from '@angular/core';
-import { MonthlyReport, StaffMember } from './payroll.model';
+import { Injectable, inject, signal } from '@angular/core';
+import { KEYS } from '../../core/config';
+import { Staff } from '../../core/models';
+import { StorageService } from '../../core/services/storage.service';
+import { MonthlyReport } from './payroll.model';
 
-const KEY = 'skillswap_payroll_staff';
+const round2 = (n: number) => Math.round(n * 100) / 100;
 
-export function calcNet(s: Pick<StaffMember, 'baseSalary' | 'allowances' | 'deductions'>): number {
-  return s.baseSalary + s.allowances - s.deductions;
+export function calcNet(s: Pick<Staff, 'baseSalary' | 'allowances' | 'deductions'>): number {
+  return round2(s.baseSalary + s.allowances - s.deductions);
 }
 
-const SEED: StaffMember[] = [
-  { id: 1, name: 'Nour Hassan', jobTitle: 'Support Lead', department: 'Platform', baseSalary: 12000, allowances: 1500, deductions: 700 },
-  { id: 2, name: 'Youssef Adel', jobTitle: 'Marketing Manager', department: 'Business', baseSalary: 15000, allowances: 2000, deductions: 1000 },
-  { id: 3, name: 'Mona Fathy', jobTitle: 'Content Reviewer', department: 'Design', baseSalary: 9000, allowances: 800, deductions: 400 },
-  { id: 4, name: 'Hady Samir', jobTitle: 'Platform Engineer', department: 'Programming', baseSalary: 18000, allowances: 2500, deductions: 1200 },
+const SEED: Staff[] = [
+  { id: 1, name: 'Nour Hassan', role: 'Support Lead', baseSalary: 12000, allowances: 1500, deductions: 700 },
+  { id: 2, name: 'Youssef Adel', role: 'Marketing Manager', baseSalary: 15000, allowances: 2000, deductions: 1000 },
+  { id: 3, name: 'Mona Fathy', role: 'Content Reviewer', baseSalary: 9000, allowances: 800, deductions: 400 },
+  { id: 4, name: 'Hady Samir', role: 'Platform Engineer', baseSalary: 18000, allowances: 2500, deductions: 1200 },
 ];
 
-// Shared state lives in this service (signal); persisted in localStorage so it survives refresh.
+/**
+ * Staff payroll.
+ * State strategy: one signal holds the staff list so every page updates together;
+ * each change is written to localStorage (via StorageService) so it survives refreshes.
+ * add / update return an error message, or null on success (same style as CourseService).
+ */
 @Injectable({ providedIn: 'root' })
 export class PayrollService {
-  readonly staff = signal<StaffMember[]>(this.load());
+  private storage = inject(StorageService);
 
-  private load(): StaffMember[] {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) return JSON.parse(raw) as StaffMember[];
-    } catch {
-      /* ignore corrupted or blocked storage */
-    }
-    return SEED;
+  readonly staff = signal<Staff[]>(this.load());
+
+  private load(): Staff[] {
+    this.storage.seedIfEmpty(KEYS.staff, SEED);
+    return this.storage.local.get<Staff[]>(KEYS.staff) ?? SEED;
   }
 
-  private save(list: StaffMember[]): void {
+  private save(list: Staff[]): void {
+    this.storage.local.set(KEYS.staff, list);
     this.staff.set(list);
-    try {
-      localStorage.setItem(KEY, JSON.stringify(list));
-    } catch {
-      /* storage unavailable: keep in-memory state */
+  }
+
+  private validate(d: Omit<Staff, 'id'>): string | null {
+    if (!d.name.trim()) return 'Name is required';
+    if (!d.role.trim()) return 'Role is required';
+    for (const n of [d.baseSalary, d.allowances, d.deductions]) {
+      if (!Number.isFinite(n) || n < 0) return 'Salary, allowances and deductions must be 0 or more';
     }
+    if (d.deductions > d.baseSalary + d.allowances) return 'Deductions cannot be more than salary plus allowances';
+    return null;
   }
 
-  add(data: Omit<StaffMember, 'id'>): void {
-    const list = this.staff();
-    const id = list.length ? Math.max(...list.map((s) => s.id)) + 1 : 1;
-    this.save([...list, { ...data, id }]);
+  add(data: Omit<Staff, 'id'>): string | null {
+    const error = this.validate(data);
+    if (error) return error;
+    const id = Math.max(0, ...this.staff().map((s) => s.id)) + 1;
+    this.save([...this.staff(), { ...data, name: data.name.trim(), role: data.role.trim(), id }]);
+    return null;
   }
 
-  update(member: StaffMember): void {
-    this.save(this.staff().map((s) => (s.id === member.id ? member : s)));
+  update(member: Staff): string | null {
+    const error = this.validate(member);
+    if (error) return error;
+    this.save(this.staff().map((s) => (s.id === member.id ? { ...member, name: member.name.trim(), role: member.role.trim() } : s)));
+    return null;
   }
 
   remove(id: number): void {
@@ -53,7 +69,7 @@ export class PayrollService {
   }
 
   totalNet(): number {
-    return this.staff().reduce((sum, s) => sum + calcNet(s), 0);
+    return round2(this.staff().reduce((sum, s) => sum + calcNet(s), 0));
   }
 
   generateReport(month: string): MonthlyReport {
@@ -62,7 +78,7 @@ export class PayrollService {
       month,
       generatedAt: new Date().toISOString(),
       lines,
-      totalNet: lines.reduce((sum, l) => sum + l.net, 0),
+      totalNet: round2(lines.reduce((sum, l) => sum + l.net, 0)),
     };
   }
 

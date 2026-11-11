@@ -1,16 +1,6 @@
-export type Department = 'Design' | 'Business' | 'Programming' | 'Platform';
+import { Staff } from '../../core/models';
 
-export interface StaffMember {
-  id: number;
-  name: string;
-  jobTitle: string;
-  department: Department;
-  baseSalary: number;
-  allowances: number;
-  deductions: number;
-}
-
-export interface SalaryLine extends StaffMember {
+export interface SalaryLine extends Staff {
   net: number;
 }
 
