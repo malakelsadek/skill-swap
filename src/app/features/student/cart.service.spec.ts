@@ -19,8 +19,7 @@ describe('CartService', () => {
       price: 25,
       instructorId: 5,
       description: 'Learn Angular fundamentals',
-      thumbnail: '',
-      rating: 4.5
+      thumbnail: ''
     },
     {
       id: 2,
@@ -29,8 +28,7 @@ describe('CartService', () => {
       price: 35,
       instructorId: 6,
       description: 'Learn JavaScript fundamentals',
-      thumbnail: '',
-      rating: 4.2
+      thumbnail: ''
     }
   ];
 
