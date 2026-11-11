@@ -23,7 +23,7 @@ import { CourseService } from './course.service';
           <div class="info card">
             <span class="badge">{{ c.category }}</span>
             <h1>{{ c.title }}</h1>
-            <p class="by">by {{ instructorName() }} &middot; {{ c.rating ? '&#9733; ' + c.rating.toFixed(1) : 'No ratings yet' }}</p>
+            <p class="by">by {{ instructorName() }}</p>
             <p>{{ c.description }}</p>
             <p class="price">\${{ c.price.toFixed(2) }}</p>
 

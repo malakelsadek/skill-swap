@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CATEGORIES } from '../../core/config';
 import { Category } from '../../core/models';
 import { StorageService } from '../../core/services/storage.service';
@@ -30,7 +30,7 @@ const CATEGORY_COOKIE = 'sw_last_category';
           <select id="category" [value]="category()" (change)="setCategory($any($event.target).value)">
             <option value="">All categories</option>
             @for (c of categories; track c) {
-              <option [value]="c">{{ c }}</option>
+              <option [value]="c" [selected]="category() === c">{{ c }}</option>
             }
           </select>
         </div>
@@ -40,7 +40,6 @@ const CATEGORY_COOKIE = 'sw_last_category';
             <option value="title">Title (A-Z)</option>
             <option value="priceAsc">Price: low to high</option>
             <option value="priceDesc">Price: high to low</option>
-            <option value="rating">Best rated</option>
           </select>
         </div>
       </div>
@@ -56,7 +55,6 @@ const CATEGORY_COOKIE = 'sw_last_category';
               <h2>{{ c.title }}</h2>
               <p class="by">by {{ instructorName(c.instructorId) }}</p>
               <p class="meta">
-                <span>{{ c.rating ? '&#9733; ' + c.rating.toFixed(1) : 'New' }}</span>
                 <strong>\${{ c.price.toFixed(2) }}</strong>
               </p>
             </a>
@@ -86,19 +84,19 @@ const CATEGORY_COOKIE = 'sw_last_category';
 export class Catalog {
   private courseService = inject(CourseService);
   private storage = inject(StorageService);
+  private route = inject(ActivatedRoute);
 
   categories = CATEGORIES;
   // Local UI state lives in signals inside this component; only the chosen category is remembered (cookie).
   query = signal('');
-  category = signal<Category | ''>(this.savedCategory());
-  sort = signal<'title' | 'priceAsc' | 'priceDesc' | 'rating'>('title');
+  category = signal<Category | ''>(this.initialCategory());
+  sort = signal<'title' | 'priceAsc' | 'priceDesc'>('title');
 
   results = computed(() => {
     const list = [...this.courseService.search(this.query(), this.category())];
     switch (this.sort()) {
       case 'priceAsc': return list.sort((a, b) => a.price - b.price);
       case 'priceDesc': return list.sort((a, b) => b.price - a.price);
-      case 'rating': return list.sort((a, b) => b.rating - a.rating);
       default: return list.sort((a, b) => a.title.localeCompare(b.title));
     }
   });
@@ -116,6 +114,12 @@ export class Catalog {
 
   instructorName(id: number): string {
     return this.courseService.instructorName(id);
+  }
+
+  /** A ?category=Design link (from Home) wins over the remembered cookie. */
+  private initialCategory(): Category | '' {
+    const fromUrl = this.route.snapshot.queryParamMap.get('category');
+    return CATEGORIES.find((c) => c === fromUrl) ?? this.savedCategory();
   }
 
   private savedCategory(): Category | '' {

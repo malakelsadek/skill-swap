@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Browse courses">
+  <circle cx="60" cy="60" r="58" fill="#eaf1ff"/>
+  <rect x="26" y="30" width="52" height="40" rx="7" fill="#fff" stroke="#2d6be4" stroke-width="3"/>
+  <rect x="33" y="38" width="22" height="6" rx="3" fill="#ff7a00"/>
+  <rect x="33" y="50" width="34" height="5" rx="2.5" fill="#b9cdf5"/>
+  <circle cx="76" cy="68" r="17" fill="#fff" stroke="#0f3c8a" stroke-width="5"/>
+  <path d="M88 80l14 14" stroke="#ff7a00" stroke-width="7" stroke-linecap="round"/>
+</svg>

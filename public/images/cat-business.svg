@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="Business: a rising bar chart with a growth arrow">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f3c8a"/><stop offset="1" stop-color="#0a2a63"/></linearGradient></defs>
+  <rect width="400" height="240" fill="url(#b)"/>
+  <circle cx="60" cy="30" r="90" fill="#fff" opacity=".07"/>
+  <circle cx="360" cy="220" r="80" fill="#ff7a00" opacity=".3"/>
+  <rect x="70" y="40" width="260" height="164" rx="14" fill="#fff"/>
+  <rect x="98" y="150" width="34" height="38" rx="6" fill="#9fb8ea"/>
+  <rect x="148" y="124" width="34" height="64" rx="6" fill="#2d6be4"/>
+  <rect x="198" y="96" width="34" height="92" rx="6" fill="#0f3c8a"/>
+  <rect x="248" y="66" width="34" height="122" rx="6" fill="#ff7a00"/>
+  <path d="M96 130l56-30 50-14 70-36" fill="none" stroke="#14213d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 9"/>
+  <path d="M262 56l22-2-8 21z" fill="#14213d"/>
+  <circle cx="318" cy="70" r="22" fill="#ffa73d"/>
+  <text x="318" y="78" text-anchor="middle" font-family="Arial" font-size="22" font-weight="bold" fill="#fff">$</text>
+</svg>

@@ -1,13 +1,21 @@
-/* Global styles shared by every page. Mobile first; breakpoints: 600 / 768 / 992 / 1200 px. */
+/* Global styles shared by every page. Mobile first; breakpoints: 600 / 768 / 992 / 1200 px.
+   Theme: blue (trust, learning) + orange (energy, action). */
 :root {
-  --primary: #1a3a6b;
-  --accent: #e8891a;
-  --bg: #f6f8fc;
-  --text: #1c1c1c;
-  --muted: #666;
-  --border: #d5dcea;
+  --primary: #0f3c8a; /* blue */
+  --primary-dark: #0a2a63;
+  --blue: #2d6be4;
+  --tint: #eaf1ff; /* light blue background */
+  --accent: #ff7a00; /* orange */
+  --accent-dark: #e56a00;
+  --accent-tint: #fff1e3;
+  --bg: #f6f8fd;
+  --text: #14213d;
+  --muted: #5c6b8a;
+  --border: #dbe3f3;
   --danger: #c0392b;
-  --success: #2c8a3d;
+  --success: #1f9d55;
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(15, 60, 138, 0.1);
   color-scheme: light; /* keep native inputs light even if the OS is in dark mode */
 }
 
@@ -17,10 +25,10 @@
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 img {
@@ -28,42 +36,59 @@ img {
   height: auto;
 }
 
+h1,
+h2,
+h3 {
+  color: var(--primary-dark);
+  line-height: 1.2;
+}
+
 h1 {
-  font-size: 1.6rem;
-  color: var(--primary);
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 a {
-  color: var(--primary);
+  color: var(--blue);
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.2rem 1rem;
 }
 
 .card {
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  box-shadow: var(--shadow);
 }
 
+/* Buttons: blue is the default, orange (.cta) is the main call to action */
 .btn {
   display: inline-block;
-  padding: 0.55rem 1.1rem;
-  border: none;
-  border-radius: 8px;
+  padding: 0.65rem 1.3rem;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
   background: var(--primary);
   color: #fff;
   font: inherit;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
 }
 
 .btn:hover {
-  filter: brightness(1.15);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 .btn:disabled {
@@ -71,19 +96,33 @@ a {
   cursor: not-allowed;
 }
 
+.btn.cta {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn.cta:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
 .btn.secondary {
   background: #fff;
   color: var(--primary);
-  border: 1px solid var(--primary);
+}
+
+.btn.secondary:hover {
+  background: var(--tint);
 }
 
 .btn.danger {
   background: var(--danger);
+  border-color: var(--danger);
 }
 
 label {
   display: block;
-  margin: 0.7rem 0 0.2rem;
+  margin: 0.8rem 0 0.25rem;
   font-weight: 600;
 }
 
@@ -91,12 +130,20 @@ input,
 select,
 textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   font: inherit;
   background: #fff;
   color: var(--text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(45, 107, 228, 0.2);
 }
 
 input[type='checkbox'],
@@ -107,6 +154,7 @@ input[type='radio'] {
 .error {
   color: var(--danger);
   font-size: 0.9rem;
+  margin: 0.25rem 0 0;
 }
 
 /* Tables scroll sideways on small screens instead of breaking the layout */
@@ -118,23 +166,25 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  border-radius: var(--radius);
 }
 
 th,
 td {
-  padding: 0.5rem 0.7rem;
+  padding: 0.65rem 0.8rem;
   border-bottom: 1px solid var(--border);
   text-align: left;
 }
 
 th {
-  background: #e8eef9;
+  background: var(--tint);
+  color: var(--primary-dark);
 }
 
 /* Responsive grid for card lists (courses, etc.): 1 / 2 / 3 / 4 columns */
 .grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
   grid-template-columns: 1fr;
 }
 
@@ -150,7 +200,7 @@ th {
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 2.3rem;
   }
 }
 
@@ -168,7 +218,7 @@ router-outlet + * {
 
 .btn,
 nav button {
-  transition: transform 0.1s, filter 0.15s;
+  transition: transform 0.1s, filter 0.15s, background 0.15s;
 }
 
 .btn:active,
@@ -182,7 +232,7 @@ a.card {
 
 a.card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 26px rgba(15, 60, 138, 0.18);
 }
 
 .shake {
@@ -197,10 +247,12 @@ a.card:hover {
 }
 
 @keyframes shake {
-  20%, 60% {
+  20%,
+  60% {
     transform: translateX(-8px);
   }
-  40%, 80% {
+  40%,
+  80% {
     transform: translateX(8px);
   }
 }

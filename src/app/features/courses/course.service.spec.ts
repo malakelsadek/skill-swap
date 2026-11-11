@@ -62,7 +62,7 @@ describe('CourseService', () => {
     auth.login('instructor1', 'Pass1234');
     expect(courses.add({ ...NEW_COURSE, price: 12.345 })).toBeNull();
     const added = courses.list().at(-1)!;
-    expect(added).toMatchObject({ id: COURSES_SEED.length + 1, instructorId: 5, price: 12.35, rating: 0 });
+    expect(added).toMatchObject({ id: COURSES_SEED.length + 1, instructorId: 5, price: 12.35 });
     expect(added.thumbnail).toContain('data:image/svg+xml'); // generated when none uploaded
     const stored = TestBed.inject(StorageService).local.get<Course[]>(KEYS.courses)!;
     expect(stored.length).toBe(COURSES_SEED.length + 1);
