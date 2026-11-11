@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ChatService } from './chat.service';
+import { SeedService } from './seed.service';
 
 const reply = (body: unknown, status = 200) =>
   Promise.resolve({ ok: status < 400, status, json: () => Promise.resolve(body) } as Response);
@@ -10,6 +11,8 @@ describe('ChatService', () => {
 
   beforeEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
+    TestBed.inject(SeedService).init();
     fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
     chat = TestBed.inject(ChatService);
@@ -36,11 +39,12 @@ describe('ChatService', () => {
     await chat.send('I want to code');
 
     const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toContain('together.xyz');
+    expect(url).toContain('generativelanguage.googleapis.com');
     expect(init.headers.Authorization).toBe('Bearer secret-key');
     const body = JSON.parse(init.body);
     expect(body.messages[0].role).toBe('system');
     expect(body.messages[0].content).toContain('Catalog');
+    expect(body.messages[0].content).toContain('UI Design Fundamentals'); // a real seeded course
     expect(body.messages.at(-1)).toEqual({ role: 'user', content: 'I want to code' });
 
     expect(chat.messages().map((m) => m.content)).toEqual(['I want to code', 'Try Angular from Scratch.']);

@@ -15,16 +15,20 @@ export class App {
   sound = inject(SoundService);
   private router = inject(Router);
   menuOpen = signal(false); // hamburger menu on small screens
+  profileOpen = signal(false); // dropdown under the profile button
 
   /** Click sound for plain buttons and button-links; submit buttons play their own success/error sound. */
   @HostListener('document:click', ['$event'])
   onClick(e: Event) {
-    if ((e.target as HTMLElement).closest('button:not([type=submit]), a.btn')) this.sound.play('click');
+    const target = e.target as HTMLElement;
+    if (target.closest('button:not([type=submit]), a.btn')) this.sound.play('click');
+    if (!target.closest('.profile')) this.profileOpen.set(false); // click elsewhere closes the profile menu
   }
 
   logout() {
     this.auth.logout();
     this.menuOpen.set(false);
+    this.profileOpen.set(false);
     this.router.navigateByUrl('/');
   }
 }

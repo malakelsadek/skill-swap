@@ -1,9 +1,9 @@
 import { Category } from '../../core/models';
 
 const COLORS: Record<Category, [string, string]> = {
-  Design: ['#e8891a', '#c0392b'],
-  Business: ['#1a3a6b', '#2c8a3d'],
-  Programming: ['#4a2c8a', '#1a3a6b'],
+  Design: ['#ffa73d', '#e56a00'],
+  Business: ['#2d6be4', '#0a2a63'],
+  Programming: ['#0f3c8a', '#ff7a00'],
 };
 
 const escapeXml = (s: string) =>

@@ -21,7 +21,6 @@ export interface Course {
   instructorId: number;
   description: string;
   thumbnail: string;
-  rating: number;
 }
 
 export interface Invoice {
