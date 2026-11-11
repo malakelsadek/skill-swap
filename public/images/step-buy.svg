@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Buy courses">
+  <circle cx="60" cy="60" r="58" fill="#fff1e3"/>
+  <path d="M26 34h12l8 36h40l8-26H42" fill="#fff" stroke="#0f3c8a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="52" cy="84" r="6" fill="#ff7a00"/>
+  <circle cx="80" cy="84" r="6" fill="#ff7a00"/>
+  <circle cx="76" cy="40" r="15" fill="#2d6be4"/>
+  <path d="M69 40l5 5 9-10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

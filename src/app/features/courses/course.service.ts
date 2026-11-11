@@ -87,7 +87,6 @@ export class CourseService {
       price: round2(data.price),
       description: data.description.trim(),
       instructorId,
-      rating: 0, // new courses have no reviews yet
       thumbnail: data.thumbnail || generateThumbnail(data.category, data.title.trim()),
     };
     this.save([...this.state(), course]);

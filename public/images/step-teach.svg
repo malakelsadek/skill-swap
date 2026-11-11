@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Teach and earn">
+  <circle cx="60" cy="60" r="58" fill="#fff1e3"/>
+  <rect x="50" y="26" width="48" height="36" rx="6" fill="#fff" stroke="#0f3c8a" stroke-width="3.5"/>
+  <path d="M58 54l9-10 7 6 11-14" fill="none" stroke="#ff7a00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="36" cy="48" r="11" fill="#2d6be4"/>
+  <path d="M18 90a18 22 0 0 1 36 0z" fill="#2d6be4"/>
+  <circle cx="84" cy="82" r="14" fill="#ff7a00"/>
+  <text x="84" y="88" text-anchor="middle" font-family="Arial" font-size="17" font-weight="bold" fill="#fff">$</text>
+</svg>

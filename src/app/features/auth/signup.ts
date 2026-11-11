@@ -60,11 +60,12 @@ import { last4, readImage } from '../../core/utils';
     </section>
   `,
   styles: `
-    .narrow { max-width: 32rem; }
+    .narrow { max-width: 32rem; margin-top: 1.5rem; }
+    h1 { text-align: center; margin-bottom: 1rem; }
     .inline { display: flex; gap: 0.5rem; align-items: center; font-weight: 400; margin: 0.3rem 0; }
     .preview { width: 5rem; height: 5rem; object-fit: cover; border-radius: 50%; margin-top: 0.4rem; }
     fieldset { margin-top: 1rem; border: 1px solid var(--border); border-radius: 8px; }
-    .btn { margin-top: 0.8rem; }
+    .btn { width: 100%; margin: 0.9rem 0; }
   `,
 })
 export class Signup {

@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { CourseService } from '../../features/courses/course.service';
 import { KEYS } from '../config';
 import { StorageService } from './storage.service';
 
@@ -8,33 +9,27 @@ export interface ChatMessage {
   content: string;
 }
 
-export const CHAT_URL = 'https://api.together.xyz/v1/chat/completions';
-// Check this name against together.ai's current model list; models get retired.
-export const CHAT_MODEL = 'meta-llama/Llama-3.3-70B-Instruct-Turbo';
+// Google Gemini's OpenAI-compatible endpoint (free tier). Any OpenAI-style provider works by changing these two lines.
+export const CHAT_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+// Check this name on Google AI Studio's model list; models get renamed and retired.
+export const CHAT_MODEL = 'gemini-3.5-flash-lite';
 
-// shortcut: fixed sample catalog, swap for CourseService.courses() once Member 2's service exists.
-const CATALOG = [
-  'Figma for Beginners (Design, $39)',
-  'Intro to Marketing (Business, $49)',
-  'Angular from Scratch (Programming, $69)',
-];
-
-const SYSTEM_PROMPT =
+const PROMPT_INTRO =
   'You are the SkillSwap assistant. Recommend courses only from this catalog and say so if none fits. ' +
-  'Keep answers under 80 words.\nCatalog:\n' +
-  CATALOG.map((c) => '- ' + c).join('\n');
+  'Keep answers under 80 words.\nCatalog:\n';
 
 /** An error whose message is safe to show to the user. */
 class ChatError extends Error {}
 
 /**
- * AI chat via together.ai. The key comes from src/environments/environment.ts.
+ * AI chat through an OpenAI-compatible API. The key comes from src/environments/environment.ts.
  * shortcut: a frontend-only app cannot hide the key (it ships in the bundle), so it must be a revocable
  * low-limit key; a backend proxy replaces this in Milestone 2.
  */
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private storage = inject(StorageService);
+  private courses = inject(CourseService);
 
   readonly messages = signal<ChatMessage[]>(this.storage.session.get<ChatMessage[]>(KEYS.chat) ?? []);
   apiKey = environment.togetherApiKey;
@@ -50,6 +45,14 @@ export class ChatService {
   private push(message: ChatMessage): void {
     this.messages.update((list) => [...list, message]);
     this.storage.session.set(KEYS.chat, this.messages());
+  }
+
+  /** The live course list, one line per course. */
+  private catalog(): string {
+    return this.courses
+      .courses()
+      .map((c) => `- ${c.title} (${c.category}, $${c.price})`)
+      .join('\n');
   }
 
   async send(text: string): Promise<void> {
@@ -69,7 +72,7 @@ export class ChatService {
         body: JSON.stringify({
           model: CHAT_MODEL,
           max_tokens: 300,
-          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...this.messages().slice(-10)],
+          messages: [{ role: 'system', content: PROMPT_INTRO + this.catalog() }, ...this.messages().slice(-10)],
         }),
       });
       if (res.status === 401) throw new ChatError('Invalid API key');

@@ -2,7 +2,7 @@ import { Course, Invoice } from '../../core/models';
 import { calculateEarnings } from './earnings.calc';
 
 const course = (id: number, instructorId: number, price: number): Course => ({
-  id, title: `Course ${id}`, category: 'Design', price, instructorId, description: 'd', thumbnail: '', rating: 0,
+  id, title: `Course ${id}`, category: 'Design', price, instructorId, description: 'd', thumbnail: '',
 });
 const invoice = (id: number, status: Invoice['status'], items: [number, number][], type: Invoice['type'] = 'course'): Invoice => ({
   id, studentId: 3, status, type, date: '2026-11-01',

@@ -1,5 +1,11 @@
 <header class="navbar">
-  <a class="brand" routerLink="/">SkillSwap</a>
+  <a class="brand" routerLink="/">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="9" fill="#ff7a00" />
+      <path d="M9 12h12l-3-3M23 20H11l3 3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <div>Skill<span>Swap</span></div>
+  </a>
   <button
     class="menu-btn"
     type="button"
@@ -10,7 +16,8 @@
     &#9776;
   </button>
 
-  <nav [class.open]="menuOpen()" (click)="menuOpen.set(false)">
+  <!-- Tabs, centered on wide screens -->
+  <nav class="links" [class.open]="menuOpen()" (click)="menuOpen.set(false)">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
     <a routerLink="/courses" routerLinkActive="active">Courses</a>
 
@@ -31,23 +38,56 @@
     @if (auth.hasRole('admin')) {
       <a routerLink="/admin/users" routerLinkActive="active">Users</a>
     }
+  </nav>
 
-    @if (auth.currentUser(); as user) {
-      <a routerLink="/profile" routerLinkActive="active">{{ user.name }}</a>
-      <button type="button" class="link-btn" (click)="logout()">Log out</button>
-    } @else {
-      <a routerLink="/login" routerLinkActive="active">Log in</a>
-      <a routerLink="/signup" class="cta">Sign up</a>
-    }
+  <!-- Right corner: sound, log in / sign up, profile -->
+  <div class="actions" [class.open]="menuOpen()">
     <button
       type="button"
-      class="link-btn"
+      class="icon-btn"
       [attr.aria-label]="sound.muted() ? 'Turn sounds on' : 'Turn sounds off'"
       (click)="sound.toggle()"
     >
       {{ sound.muted() ? '&#128263;' : '&#128266;' }}
     </button>
-  </nav>
+
+    @if (auth.currentUser(); as user) {
+      <div class="profile">
+        <button
+          type="button"
+          class="avatar-btn"
+          aria-label="Account menu"
+          [attr.aria-expanded]="profileOpen()"
+          (click)="profileOpen.set(!profileOpen())"
+        >
+          @if (user.picture) {
+            <img [src]="user.picture" alt="" />
+          } @else {
+            {{ user.name.charAt(0) }}
+          }
+        </button>
+        @if (profileOpen()) {
+          <div class="menu" role="menu">
+            <p class="who">
+              <strong>{{ user.name }}</strong>
+              <small>{{ user.role }}</small>
+            </p>
+            <a routerLink="/profile" role="menuitem" (click)="profileOpen.set(false); menuOpen.set(false)">My profile</a>
+            <button type="button" role="menuitem" (click)="logout()">Log out</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <a routerLink="/login" class="login-link" routerLinkActive="active">Log in</a>
+      <a routerLink="/signup" class="cta">Sign up</a>
+      <a routerLink="/profile" class="avatar-btn guest" aria-label="Profile">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" fill="currentColor" />
+          <path d="M4 21a8 8 0 0 1 16 0z" fill="currentColor" />
+        </svg>
+      </a>
+    }
+  </div>
 </header>
 
 <main>
