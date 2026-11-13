@@ -22,7 +22,10 @@
     <a routerLink="/courses" routerLinkActive="active">Courses</a>
 
     @if (auth.hasRole('student')) {
-      <a routerLink="/cart" routerLinkActive="active">Cart</a>
+      <a routerLink="/cart" routerLinkActive="active">
+        Cart
+        @if (cart.cart().length) { <span class="count">{{ cart.cart().length }}</span> }
+      </a>
       <a routerLink="/invoices" routerLinkActive="active">Invoices</a>
       <a routerLink="/payments" routerLinkActive="active">Payments</a>
     }

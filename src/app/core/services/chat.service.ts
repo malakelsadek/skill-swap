@@ -79,7 +79,8 @@ export class ChatService {
       if (!res.ok) throw new ChatError(`Assistant error (${res.status})`);
       const reply = (await res.json()).choices?.[0]?.message?.content;
       if (!reply) throw new ChatError('The assistant sent an empty reply');
-      this.push({ role: 'assistant', content: String(reply).trim() });
+      // The bubbles show plain text, so drop the markdown bold markers models like to add.
+      this.push({ role: 'assistant', content: String(reply).replace(/\*\*/g, '').trim() });
     } catch (e) {
       this.error.set(e instanceof ChatError ? e.message : 'Assistant unavailable right now');
     } finally {

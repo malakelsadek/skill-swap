@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { resetSpies } from '../../testing';
 import { InvoiceService } from './invoice.service';
 import { StorageService } from '../../core/services/storage.service';
 import { KEYS, SUBSCRIPTION_PRICE } from '../../core/config';
@@ -12,8 +12,8 @@ describe('InvoiceService', () => {
 
   const storageMock = {
     local: {
-      get: vi.fn((key: string) => mockData[key] ?? null),
-      set: vi.fn((key: string, value: unknown) => {
+      get: jasmine.createSpy().and.callFake((key: string) => mockData[key] ?? null),
+      set: jasmine.createSpy().and.callFake((key: string, value: unknown) => {
         mockData[key] = value;
       })
     }
@@ -47,7 +47,7 @@ describe('InvoiceService', () => {
     });
 
     service = TestBed.inject(InvoiceService);
-    vi.clearAllMocks();
+    resetSpies(storageMock);
   });
 
   it('should be created', () => {
@@ -63,7 +63,7 @@ describe('InvoiceService', () => {
       expect(invoice.status).toBe('pending');
       expect(invoice.type).toBe('course');
       expect(invoice.items.length).toBe(2);
-      expect(mockData[KEYS.invoices]).toHaveLength(1);
+      expect((mockData[KEYS.invoices] as unknown[]).length).toBe(1);
     });
 
     it('should not create a payment or enrollments yet', () => {
@@ -134,7 +134,7 @@ describe('InvoiceService', () => {
 
       const payments = mockData[KEYS.payments] as Payment[];
       expect(payment).not.toBeNull();
-      expect(payments).toHaveLength(1);
+      expect(payments.length).toBe(1);
       expect(payments[0].invoiceId).toBe(10);
       expect(payments[0].studentId).toBe(3);
       expect(payments[0].amount).toBe(25);
@@ -146,7 +146,7 @@ describe('InvoiceService', () => {
       service.markPaid(10, 3);
 
       const enrollments = mockData[KEYS.enrollments] as Enrollment[];
-      expect(enrollments).toHaveLength(1);
+      expect(enrollments.length).toBe(1);
       expect(enrollments[0].studentId).toBe(3);
       expect(enrollments[0].courseId).toBe(1);
     });
@@ -159,7 +159,7 @@ describe('InvoiceService', () => {
       service.markPaid(10, 3);
 
       expect(mockData[KEYS.enrollments]).toBeUndefined();
-      expect(mockData[KEYS.payments]).toHaveLength(1);
+      expect((mockData[KEYS.payments] as unknown[]).length).toBe(1);
     });
 
     it('should return null if the invoice is already paid', () => {
@@ -210,7 +210,7 @@ describe('InvoiceService', () => {
         { ...pendingInvoice, id: 2, studentId: 4 }
       ];
 
-      expect(service.getAllInvoices()).toHaveLength(2);
+      expect(service.getAllInvoices().length).toBe(2);
     });
 
     it('should return only the student payments', () => {
@@ -220,7 +220,7 @@ describe('InvoiceService', () => {
       ];
 
       const payments = service.getStudentPayments(3);
-      expect(payments).toHaveLength(1);
+      expect(payments.length).toBe(1);
       expect(payments[0].amount).toBe(10);
     });
 
@@ -242,7 +242,7 @@ describe('InvoiceService', () => {
       expect(result?.status).toBe('pending');
       expect(result?.reason).toBe('Incorrect course');
       expect(result?.studentId).toBe(3);
-      expect(mockData[KEYS.refunds]).toHaveLength(1);
+      expect((mockData[KEYS.refunds] as unknown[]).length).toBe(1);
     });
 
     it('should prevent duplicate pending refund requests', () => {
@@ -252,7 +252,7 @@ describe('InvoiceService', () => {
       ];
 
       expect(service.requestRefund(10, 3, 'Another request')).toBeNull();
-      expect(mockData[KEYS.refunds]).toHaveLength(1);
+      expect((mockData[KEYS.refunds] as unknown[]).length).toBe(1);
     });
 
     it('should reject requests for another student invoice', () => {
@@ -279,7 +279,7 @@ describe('InvoiceService', () => {
 
       expect(result?.status).toBe('pending');
       expect(result?.id).toBe(2);
-      expect(mockData[KEYS.refunds]).toHaveLength(2);
+      expect((mockData[KEYS.refunds] as unknown[]).length).toBe(2);
     });
   });
 
@@ -315,7 +315,7 @@ describe('InvoiceService', () => {
 
       expect(result?.status).toBe('rejected');
       expect((mockData[KEYS.invoices] as Invoice[])[0].status).toBe('paid');
-      expect(mockData[KEYS.enrollments] as Enrollment[]).toHaveLength(2);
+      expect((mockData[KEYS.enrollments] as Enrollment[]).length).toBe(2);
     });
 
     it('should return null for an unknown or already resolved refund', () => {

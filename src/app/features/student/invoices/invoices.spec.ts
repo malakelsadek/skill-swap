@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { vi } from 'vitest';
 
 import { Invoices } from './invoices';
 import { InvoiceService } from '../invoice.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { resetSpies } from '../../../testing';
 
 describe('Invoices', () => {
   let component: Invoices;
@@ -16,12 +16,12 @@ describe('Invoices', () => {
   });
 
   const invoiceServiceMock = {
-    getStudentInvoices: vi.fn(() => []),
-    getAllInvoices: vi.fn(() => []),
-    getStudentRefunds: vi.fn(() => []),
-    getAllRefunds: vi.fn(() => []),
-    requestRefund: vi.fn(),
-    markPaid: vi.fn()
+    getStudentInvoices: jasmine.createSpy().and.callFake(() => []),
+    getAllInvoices: jasmine.createSpy().and.callFake(() => []),
+    getStudentRefunds: jasmine.createSpy().and.callFake(() => []),
+    getAllRefunds: jasmine.createSpy().and.callFake(() => []),
+    requestRefund: jasmine.createSpy(),
+    markPaid: jasmine.createSpy()
   };
 
   const authServiceMock = {
@@ -30,7 +30,7 @@ describe('Invoices', () => {
 
   beforeEach(async () => {
     currentUser.set({ id: 3, role: 'student' });
-    vi.clearAllMocks();
+    resetSpies(invoiceServiceMock);
 
     await TestBed.configureTestingModule({
       imports: [Invoices],
@@ -101,11 +101,11 @@ describe('Invoices', () => {
       invoiceId: 5,
       studentId: 3,
       reason: 'Incorrect course',
-      status: 'pending',
+      status: 'pending' as const,
       date: '2026-11-10T12:00:00.000Z'
     };
 
-    invoiceServiceMock.requestRefund.mockReturnValue(refund);
+    invoiceServiceMock.requestRefund.and.returnValue(refund);
 
     const reasonInput = {
       value: '  Incorrect course  '
@@ -181,7 +181,7 @@ describe('Invoices', () => {
   });
 
   it('should close the refund form after a successful request', () => {
-    invoiceServiceMock.requestRefund.mockReturnValue({ id: 1, invoiceId: 5 });
+    invoiceServiceMock.requestRefund.and.returnValue({ id: 1, invoiceId: 5 });
     component.openRefund(5);
 
     component.submitRefund(5, { value: 'Wrong course' } as HTMLInputElement);
@@ -190,8 +190,8 @@ describe('Invoices', () => {
   });
 
   it('should pay a pending invoice and reload the list', () => {
-    invoiceServiceMock.markPaid.mockReturnValue({ id: 1 });
-    invoiceServiceMock.getStudentInvoices.mockClear();
+    invoiceServiceMock.markPaid.and.returnValue({ id: 1 });
+    invoiceServiceMock.getStudentInvoices.calls.reset();
 
     component.payNow(7);
 
@@ -201,7 +201,7 @@ describe('Invoices', () => {
   });
 
   it('should show a message when paying fails', () => {
-    invoiceServiceMock.markPaid.mockReturnValue(null);
+    invoiceServiceMock.markPaid.and.returnValue(null);
 
     component.payNow(7);
 

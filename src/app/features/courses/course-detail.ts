@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { SoundService } from '../../core/services/sound.service';
 import { StorageService } from '../../core/services/storage.service';
 import { SuccessCheck } from '../../shared/success-check/success-check';
+import { CartService } from '../student/cart.service';
 import { CourseService } from './course.service';
 
 @Component({
@@ -88,9 +89,8 @@ export class CourseDetail {
     return c ? this.courses.instructorName(c.instructorId) : '';
   });
 
-  // Cart format shared with Member 3: sessionStorage KEYS.cart = array of course ids.
-  private cartIds = signal<number[]>(this.storage.session.get<number[]>(KEYS.cart) ?? []);
-  inCart = computed(() => this.cartIds().includes(this.id()));
+  private cartService = inject(CartService);
+  inCart = computed(() => this.cartService.cart().some((c) => c.id === this.id()));
 
   owned = computed(() => {
     const me = this.auth.currentUser();
@@ -100,9 +100,7 @@ export class CourseDetail {
 
   addToCart() {
     if (this.inCart()) return;
-    const ids = [...(this.storage.session.get<number[]>(KEYS.cart) ?? []), this.id()];
-    this.storage.session.set(KEYS.cart, ids);
-    this.cartIds.set(ids);
+    this.cartService.add(this.id());
     this.sound.play('cart');
   }
 

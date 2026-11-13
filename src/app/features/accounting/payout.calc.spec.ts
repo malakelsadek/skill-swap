@@ -17,8 +17,8 @@ const INSTRUCTORS = [instructor(5, 'Dina'), instructor(6, 'Karim')];
 describe('calculatePayouts', () => {
   it('splits a mixed invoice between the two instructors', () => {
     const result = calculatePayouts([invoice(1, 'paid', [[1, 100], [3, 80]])], COURSES, INSTRUCTORS);
-    expect(result.rows.find((r) => r.instructorId === 5)).toMatchObject({ gross: 100, earned: 70, platform: 30 });
-    expect(result.rows.find((r) => r.instructorId === 6)).toMatchObject({ gross: 80, earned: 56, platform: 24 });
+    expect(result.rows.find((r) => r.instructorId === 5)).toEqual(jasmine.objectContaining({ gross: 100, earned: 70, platform: 30 }));
+    expect(result.rows.find((r) => r.instructorId === 6)).toEqual(jasmine.objectContaining({ gross: 80, earned: 56, platform: 24 }));
   });
 
   it('totals add up across instructors', () => {

@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { KEYS } from '../../core/config';
 import { BudgetEntry } from '../../core/models';
@@ -18,7 +17,7 @@ describe('summarize', () => {
       entry({ id: 5, department: 'Business', type: 'income', amount: 500 }),
     ]);
     const design = result.find((r) => r.department === 'Design')!;
-    expect(design).toMatchObject({ income: 1000, expenses: 200, marketing: 100, refunds: 50, net: 650 });
+    expect(design).toEqual(jasmine.objectContaining({ income: 1000, expenses: 200, marketing: 100, refunds: 50, net: 650 }));
     expect(result.find((r) => r.department === 'Business')!.net).toBe(500);
     expect(result.find((r) => r.department === 'Programming')!.net).toBe(0);
   });

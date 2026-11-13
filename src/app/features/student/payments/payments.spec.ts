@@ -1,11 +1,11 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { vi } from 'vitest';
 
 import { Payments } from './payments';
 import { InvoiceService } from '../invoice.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { resetSpies } from '../../../testing';
 
 describe('Payments', () => {
   let component: Payments;
@@ -17,7 +17,7 @@ describe('Payments', () => {
   });
 
   const invoiceServiceMock = {
-    getStudentPayments: vi.fn(() => [])
+    getStudentPayments: jasmine.createSpy().and.callFake(() => [])
   };
 
   const authServiceMock = {
@@ -26,7 +26,7 @@ describe('Payments', () => {
 
   beforeEach(async () => {
     currentUser.set({ id: 3, role: 'student' });
-    vi.clearAllMocks();
+    resetSpies(invoiceServiceMock);
 
     await TestBed.configureTestingModule({
       imports: [Payments],

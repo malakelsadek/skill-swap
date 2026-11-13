@@ -48,3 +48,6 @@ src/environments/environment.local.ts
 
 # Claude Code local config
 .claude/
+
+# Your report files (screenshots, notes, the Word/PDF document): kept on your machine, not pushed
+report/
