@@ -1,9 +1,11 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RefundService } from './refund.service';
 
 // Component state (message) = signal here; refund data and decisions = RefundService.
 @Component({
   selector: 'app-refunds',
+  imports: [DatePipe],
   template: `
     <section class="wrap">
       <header class="head">
@@ -19,7 +21,7 @@ import { RefundService } from './refund.service';
           <tbody>
             @for (r of svc.rows(); track r.refund.id) {
               <tr>
-                <td data-label="Date">{{ r.refund.date }}</td>
+                <td data-label="Date">{{ r.refund.date | date: 'dd/MM/yyyy' }}</td>
                 <td data-label="Student">{{ r.studentName }}</td>
                 <td data-label="Invoice">#{{ r.refund.invoiceId }}</td>
                 <td data-label="Courses">{{ r.courses }}</td>

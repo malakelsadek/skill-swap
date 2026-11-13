@@ -52,7 +52,7 @@ describe('SeedService and utils', () => {
     TestBed.inject(SeedService).init();
     expect(TestBed.inject(StorageService).local.get(KEYS.users)).toEqual(USERS_SEED);
     expect(USERS_SEED.map((u) => u.role)).toEqual(
-      expect.arrayContaining(['admin', 'accountant', 'student', 'instructor']),
+      jasmine.arrayContaining(['admin', 'accountant', 'student', 'instructor']),
     );
   });
 

@@ -37,17 +37,19 @@ describe('Signup form', () => {
     expect(page.form.valid).toBe(true);
   });
 
-  it.each([
+  for (const [field, value] of [
     ['email', 'not-an-email'],
     ['password', 'short1'],
     ['password', 'nodigitshere'],
     ['cardNumber', '1234'],
     ['expiry', '13/29'],
-  ])('rejects a bad %s (%s)', (field, value) => {
-    const page = make();
-    page.form.setValue({ ...validSignup, [field]: value });
-    expect(page.form.valid).toBe(false);
-  });
+  ]) {
+    it(`rejects a bad ${field} (${value})`, () => {
+      const page = make();
+      page.form.setValue({ ...validSignup, [field]: value });
+      expect(page.form.valid).toBe(false);
+    });
+  }
 
   it('creates the account, stores only the last 4 card digits, and logs in', () => {
     const page = make();
@@ -86,7 +88,7 @@ describe('Login form', () => {
 
   it('logs in and goes home', () => {
     const page = make();
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
     page.form.patchValue({ username: 'student1', password: 'Pass1234' });
     page.submit();
     expect(TestBed.inject(AuthService).isLoggedIn()).toBe(true);

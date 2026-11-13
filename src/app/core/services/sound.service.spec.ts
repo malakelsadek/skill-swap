@@ -4,6 +4,8 @@ import { SeedService } from './seed.service';
 import { SoundService } from './sound.service';
 
 describe('SoundService', () => {
+  const win = window as unknown as { AudioContext: unknown };
+  const realAudioContext = win.AudioContext;
   let oscillators: number;
 
   beforeEach(() => {
@@ -11,26 +13,23 @@ describe('SoundService', () => {
     sessionStorage.clear();
     oscillators = 0;
     // Minimal AudioContext stand-in that counts the tones played.
-    vi.stubGlobal(
-      'AudioContext',
-      class {
-        state = 'running';
-        currentTime = 0;
-        destination = {};
-        createGain() {
-          const node = { gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect: () => node };
-          return node;
-        }
-        createOscillator() {
-          oscillators++;
-          return { frequency: {}, connect: (n: unknown) => n, start() {}, stop() {} };
-        }
-      },
-    );
+    win.AudioContext = class {
+      state = 'running';
+      currentTime = 0;
+      destination = {};
+      createGain() {
+        const node = { gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect: () => node };
+        return node;
+      }
+      createOscillator() {
+        oscillators++;
+        return { frequency: {}, connect: (n: unknown) => n, start() {}, stop() {} };
+      }
+    };
     TestBed.inject(SeedService).init();
   });
 
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => (win.AudioContext = realAudioContext));
 
   it('plays one tone per note', () => {
     const sound = TestBed.inject(SoundService);
@@ -58,7 +57,7 @@ describe('SoundService', () => {
   });
 
   it('does not throw when audio is unavailable', () => {
-    vi.stubGlobal('AudioContext', undefined);
+    win.AudioContext = undefined;
     expect(() => TestBed.inject(SoundService).play('error')).not.toThrow();
   });
 });

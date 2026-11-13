@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { resetSpies } from '../../testing';
 
 import { CartService } from './cart.service';
 import { StorageService } from '../../core/services/storage.service';
@@ -34,21 +34,21 @@ describe('CartService', () => {
 
   const storageMock = {
     session: {
-        get: vi.fn(() => savedIds),
-        set: vi.fn((_key: string, value: number[]) => {
+        get: jasmine.createSpy().and.callFake(() => savedIds),
+        set: jasmine.createSpy().and.callFake((_key: string, value: number[]) => {
         savedIds = value;
         })
       }
     };
 
   const courseServiceMock = {
-    get: vi.fn((id: number) => mockCourses.find(course => course.id === id))
+    get: jasmine.createSpy().and.callFake((id: number) => mockCourses.find(course => course.id === id))
   };
 
   beforeEach(() => {
     savedIds = [];
 
-    storageMock.session.get.mockImplementation(() => savedIds);
+    storageMock.session.get.and.callFake(() => savedIds);
 
     TestBed.configureTestingModule({
       providers: [
@@ -60,8 +60,8 @@ describe('CartService', () => {
 
     service = TestBed.inject(CartService);
 
-    vi.clearAllMocks();
-    storageMock.session.get.mockImplementation(() => savedIds);
+    resetSpies(storageMock, courseServiceMock);
+    storageMock.session.get.and.callFake(() => savedIds);
   });
 
   it('should be created', () => {
@@ -84,7 +84,7 @@ describe('CartService', () => {
 
   it('should prevent adding duplicate courses', () => {
     service.add(1);
-    storageMock.session.set.mockClear();
+    storageMock.session.set.calls.reset();
 
     service.add(1);
 

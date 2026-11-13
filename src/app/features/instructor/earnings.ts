@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { KEYS, REVENUE_SHARE } from '../../core/config';
@@ -9,7 +10,7 @@ import { calculateEarnings } from './earnings.calc';
 
 @Component({
   selector: 'app-earnings',
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   template: `
     <section class="container">
       <a routerLink="/instructor">&larr; My courses</a>
@@ -33,7 +34,7 @@ import { calculateEarnings } from './earnings.calc';
             <tbody>
               @for (r of data().rows; track r.invoiceId + '-' + r.courseId) {
                 <tr>
-                  <td>{{ r.date }}</td>
+                  <td>{{ r.date | date: 'dd/MM/yyyy' }}</td>
                   <td>{{ r.courseTitle }}</td>
                   <td>#{{ r.invoiceId }}</td>
                   <td>\${{ r.price.toFixed(2) }}</td>

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { resetSpies } from '../../../testing';
 import { signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { vi } from 'vitest';
 import { Checkout } from './checkout';
 import { CartService } from '../cart.service';
 import { InvoiceService } from '../invoice.service';
@@ -27,14 +27,14 @@ describe('Checkout', () => {
   const cartServiceMock = {
     cart: signal<Course[]>([]),
     total: signal(0),
-    clear: vi.fn(),
-    refresh: vi.fn()
+    clear: jasmine.createSpy(),
+    refresh: jasmine.createSpy()
   };
 
   const invoiceServiceMock = {
-    checkoutCourses: vi.fn(),
-    checkoutSubscription: vi.fn(),
-    markPaid: vi.fn()
+    checkoutCourses: jasmine.createSpy(),
+    checkoutSubscription: jasmine.createSpy(),
+    markPaid: jasmine.createSpy()
   };
 
   const authServiceMock = {
@@ -42,7 +42,7 @@ describe('Checkout', () => {
   };
 
   const routerMock = {
-    navigate: vi.fn()
+    navigate: jasmine.createSpy()
   };
 
   function create() {
@@ -53,19 +53,19 @@ describe('Checkout', () => {
 
   beforeEach(async () => {
     plan = null;
-    vi.clearAllMocks();
+    resetSpies(cartServiceMock, invoiceServiceMock, routerMock);
 
     cartServiceMock.cart.set([course]);
     cartServiceMock.total.set(25);
     authServiceMock.currentUser.set({ id: 3 });
-    invoiceServiceMock.checkoutCourses.mockReturnValue(courseInvoice);
-    invoiceServiceMock.checkoutSubscription.mockReturnValue({
+    invoiceServiceMock.checkoutCourses.and.returnValue(courseInvoice);
+    invoiceServiceMock.checkoutSubscription.and.returnValue({
       ...courseInvoice,
       items: [],
       total: SUBSCRIPTION_PRICE,
       type: 'subscription'
     });
-    invoiceServiceMock.markPaid.mockReturnValue({ id: 1 });
+    invoiceServiceMock.markPaid.and.returnValue({ id: 1 });
 
     await TestBed.configureTestingModule({
       imports: [Checkout],
@@ -79,7 +79,7 @@ describe('Checkout', () => {
           useValue: {
             snapshot: {
               queryParamMap: {
-                get: vi.fn(() => plan)
+                get: jasmine.createSpy().and.callFake(() => plan)
               }
             }
           }
@@ -122,7 +122,7 @@ describe('Checkout', () => {
   });
 
   it('should show a message and keep the cart if a course is already owned', () => {
-    invoiceServiceMock.checkoutCourses.mockReturnValue(null);
+    invoiceServiceMock.checkoutCourses.and.returnValue(null);
     const { component } = create();
 
     component.payNow();

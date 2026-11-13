@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { SoundService } from './core/services/sound.service';
+import { CartService } from './features/student/cart.service';
 import { ChatWidget } from './shared/chat-widget/chat-widget';
 
 @Component({
@@ -13,6 +14,7 @@ import { ChatWidget } from './shared/chat-widget/chat-widget';
 export class App {
   auth = inject(AuthService);
   sound = inject(SoundService);
+  cart = inject(CartService);
   private router = inject(Router);
   menuOpen = signal(false); // hamburger menu on small screens
   profileOpen = signal(false); // dropdown under the profile button

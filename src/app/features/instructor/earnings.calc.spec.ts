@@ -15,19 +15,19 @@ const COURSES = [course(1, 5, 100), course(2, 5, 50), course(3, 6, 80)];
 describe('calculateEarnings', () => {
   it('gives the instructor 70% of each paid sale', () => {
     const result = calculateEarnings([invoice(1, 'paid', [[1, 100]])], COURSES, 5);
-    expect(result).toMatchObject({ sales: 1, gross: 100, earned: 70, platform: 30 });
-    expect(result.rows[0]).toMatchObject({ invoiceId: 1, courseId: 1, courseTitle: 'Course 1', price: 100, share: 70 });
+    expect(result).toEqual(jasmine.objectContaining({ sales: 1, gross: 100, earned: 70, platform: 30 }));
+    expect(result.rows[0]).toEqual(jasmine.objectContaining({ invoiceId: 1, courseId: 1, courseTitle: 'Course 1', price: 100, share: 70 }));
   });
 
   it('counts only the instructor\'s courses inside a mixed invoice', () => {
     const result = calculateEarnings([invoice(1, 'paid', [[1, 100], [3, 80]])], COURSES, 5);
-    expect(result).toMatchObject({ sales: 1, gross: 100, earned: 70 });
-    expect(calculateEarnings([invoice(1, 'paid', [[1, 100], [3, 80]])], COURSES, 6)).toMatchObject({ gross: 80, earned: 56 });
+    expect(result).toEqual(jasmine.objectContaining({ sales: 1, gross: 100, earned: 70 }));
+    expect(calculateEarnings([invoice(1, 'paid', [[1, 100], [3, 80]])], COURSES, 6)).toEqual(jasmine.objectContaining({ gross: 80, earned: 56 }));
   });
 
   it('ignores pending and refunded invoices', () => {
     const invoices = [invoice(1, 'pending', [[1, 100]]), invoice(2, 'refunded', [[2, 50]]), invoice(3, 'paid', [[2, 50]])];
-    expect(calculateEarnings(invoices, COURSES, 5)).toMatchObject({ sales: 1, gross: 50, earned: 35 });
+    expect(calculateEarnings(invoices, COURSES, 5)).toEqual(jasmine.objectContaining({ sales: 1, gross: 50, earned: 35 }));
   });
 
   it('ignores subscription invoices', () => {

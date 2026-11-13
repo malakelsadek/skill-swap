@@ -62,7 +62,7 @@ describe('CourseService', () => {
     auth.login('instructor1', 'Pass1234');
     expect(courses.add({ ...NEW_COURSE, price: 12.345 })).toBeNull();
     const added = courses.list().at(-1)!;
-    expect(added).toMatchObject({ id: COURSES_SEED.length + 1, instructorId: 5, price: 12.35 });
+    expect(added).toEqual(jasmine.objectContaining({ id: COURSES_SEED.length + 1, instructorId: 5, price: 12.35 }));
     expect(added.thumbnail).toContain('data:image/svg+xml'); // generated when none uploaded
     const stored = TestBed.inject(StorageService).local.get<Course[]>(KEYS.courses)!;
     expect(stored.length).toBe(COURSES_SEED.length + 1);
@@ -93,7 +93,7 @@ describe('CourseService', () => {
   it('lets an instructor edit their own course', () => {
     auth.login('instructor1', 'Pass1234');
     expect(courses.update(1, { title: 'UI Design Pro', price: 55 })).toBeNull();
-    expect(courses.get(1)).toMatchObject({ title: 'UI Design Pro', price: 55, instructorId: 5 });
+    expect(courses.get(1)).toEqual(jasmine.objectContaining({ title: 'UI Design Pro', price: 55, instructorId: 5 }));
   });
 
   it("blocks an instructor from editing or deleting another instructor's course", () => {
